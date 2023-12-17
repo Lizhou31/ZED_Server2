@@ -20,6 +20,10 @@ namespace myWebSocket
         {
             return listen(sockfd, backlog);
         }
+        int Caccept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) override
+        {
+            return accept(sockfd, addr, addrlen);
+        }
     };
 
     // Concrete Web Socket
@@ -45,7 +49,7 @@ namespace myWebSocket
         ISystemSocket *systemSocket;
         int _server_fd, _client_fd;
         struct sockaddr_in _server_address, _client_address;
-        socklen_t _client_address_length;
+        socklen_t _client_address_len;
     };
 
     // Concrete factory for Web Socket

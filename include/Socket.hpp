@@ -33,6 +33,7 @@ public:
     virtual ~ISystemSocket() = default;
     virtual int Cbind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) = 0;
     virtual int Clisten(int sockfd, int backlog) = 0;
+    virtual int Caccept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) = 0;
 };
 
 // Exception

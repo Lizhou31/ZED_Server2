@@ -12,7 +12,7 @@ namespace
     TEST_F(WebSocketTest, testinitFailedBind)
     {
         EXPECT_CALL(mockSys, Cbind(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(-1));
-        
+
         EXPECT_THROW({
             try
             {
@@ -45,5 +45,31 @@ namespace
         },
                      SocketException);
     }
+
+    TEST_F(WebSocketTest, testacceptSuccessAccept)
+    {
+        EXPECT_CALL(mockSys, Caccept(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(888));
+        ws->accept();
+        EXPECT_EQ(getclientfd(), 888);
+    }
+
+    TEST_F(WebSocketTest, testacceptFailedAccept)
+    {
+        EXPECT_CALL(mockSys, Caccept(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(-1));
+        EXPECT_THROW({
+            try
+            {
+                ws->accept();
+            }
+            catch (const SocketException &e)
+            {
+                EXPECT_STREQ("Socket accept error", e.what());
+                throw;
+            }
+        },
+                     SocketException);
+    }
+
+    
 
 }

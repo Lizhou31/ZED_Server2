@@ -10,6 +10,7 @@ class MockSystemSocket : public ISystemSocket
 public:
     MOCK_METHOD(int, Cbind, (int, const struct sockaddr *, socklen_t), (override));
     MOCK_METHOD(int, Clisten, (int, int), (override));
+    MOCK_METHOD(int, Caccept, (int, struct sockaddr *, socklen_t *), (override));
 };
 
 class WebSocketTest : public ::testing::Test
@@ -28,6 +29,10 @@ protected:
 
     void TearDown() override
     {
+    }
+
+    int getclientfd(){
+        return ws->_client_fd;
     }
 };
 
