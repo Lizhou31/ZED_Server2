@@ -15,27 +15,20 @@ public:
 class WebSocketTest : public ::testing::Test
 {
 protected:
+    MockSystemSocket mockSys;
+    std::unique_ptr<myWebSocket::WebSocket> ws;
     WebSocketTest() {}
     ~WebSocketTest() override
     {
     }
     void SetUp() override
     {
-        ws = new myWebSocket::WebSocket(&mockSys, 8888);
+        ws = std::make_unique<myWebSocket::WebSocket>(&mockSys, 8888);
     }
 
     void TearDown() override
     {
-        delete ws;
     }
-
-    void getCbindParam(int *_serverfd, struct sockaddr_in *_server_addr)
-    {
-        *_serverfd = ws->_server_fd;
-        _server_addr = &(ws->_server_address);
-    }
-    myWebSocket::WebSocket *ws;
-    MockSystemSocket mockSys;
 };
 
 #endif /* WEBSOCKET_TEST_H */

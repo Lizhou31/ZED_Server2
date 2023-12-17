@@ -27,7 +27,7 @@ namespace myWebSocket
     {
     public:
         friend class ::WebSocketTest;
-        WebSocket(ISystemSocket *sys, int port) : SystemSocket(sys)
+        WebSocket(ISystemSocket *sys, int port) : systemSocket(sys)
         {
             bzero(&_server_address, sizeof(_server_address));
             _server_address.sin_family = AF_INET;
@@ -42,7 +42,7 @@ namespace myWebSocket
         void close() override;
 
     private:
-        ISystemSocket *SystemSocket;
+        ISystemSocket *systemSocket;
         int _server_fd, _client_fd;
         struct sockaddr_in _server_address, _client_address;
         socklen_t _client_address_length;
