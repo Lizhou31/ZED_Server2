@@ -29,6 +29,10 @@ namespace myWebSocket
         {
             return recvfrom(socket, (void *)buffer, length, flags, address, address_len);
         }
+        int Cclose(int sockfd) override
+        {
+            return close(sockfd);
+        }
     };
 
     // Concrete Web Socket
@@ -47,8 +51,9 @@ namespace myWebSocket
         }
         void init() override;
         void accept() override;
-        void recvfrom(::std::string & message) override;
-        void close() override;
+        void recvfrom(::std::string &message) override;
+        void closeConnection() override;
+        void closeServer() override;
 
     private:
         ISystemSocket *systemSocket;

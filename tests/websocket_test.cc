@@ -87,4 +87,72 @@ namespace
         EXPECT_EQ(recv_message, "TTTTTTTTTT");
     }
 
+    TEST_F(WebSocketTest, testrecvfromFailed)
+    {
+        char *buf_p = getbuffer_p();
+        ::std::string recv_message;
+        EXPECT_CALL(mockSys, Crecvfrom(::testing::_, buf_p,
+                                       2048, 0, ::testing::_, ::testing::_))
+            .WillOnce(::testing::Return(-1));
+
+        EXPECT_THROW({
+            try
+            {
+                ws->recvfrom(recv_message);
+            }
+            catch (const SocketException &e)
+            {
+                EXPECT_STREQ("Socket recvfrom error", e.what());
+                throw;
+            }
+        },
+                     SocketException);
+    }
+
+    TEST_F(WebSocketTest, testcloseConnectionSuccess)
+    {
+        EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(0));
+        EXPECT_NO_THROW(ws->closeConnection());
+    }
+
+    TEST_F(WebSocketTest, testcloseConnectionFailed)
+    {
+        EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(-1));
+        EXPECT_THROW({
+            try
+            {
+                ws->closeConnection();
+            }
+            catch (const SocketException &e)
+            {
+                EXPECT_STREQ("Socket connection close error", e.what());
+                throw;
+            }
+        },
+                     SocketException);
+    }
+
+    TEST_F(WebSocketTest, testcloseServerSuccess)
+    {
+        EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(0));
+        EXPECT_NO_THROW(ws->closeServer());
+    }
+
+    TEST_F(WebSocketTest, testcloseServerFailed)
+    {
+        EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(-1));
+        EXPECT_THROW({
+            try
+            {
+                ws->closeServer();
+            }
+            catch (const SocketException &e)
+            {
+                EXPECT_STREQ("Socket server close error", e.what());
+                throw;
+            }
+        },
+                     SocketException);
+    }
+
 }

@@ -29,11 +29,26 @@ namespace myWebSocket
     {
         ssize_t msglen = systemSocket->Crecvfrom(_client_fd, _buf, 2048, 0,
                                                  (struct sockaddr *)&_client_address, &_client_address_len);
+        if (msglen == -1)
+        {
+            throw SocketException("Socket recvfrom error");
+        }
         // Put tailing characters
         _buf[msglen] = 0;
         message += _buf;
     }
-    void WebSocket::close()
+    void WebSocket::closeConnection()
     {
+        int ret = systemSocket->Cclose(_client_fd);
+        if (ret != 0){
+            throw SocketException("Socket connection close error");
+        }
+    }
+    void WebSocket::closeServer()
+    {
+        int ret = systemSocket->Cclose(_server_fd);
+        if (ret != 0){
+            throw SocketException("Socket server close error");
+        }
     }
 }
