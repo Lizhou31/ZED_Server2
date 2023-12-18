@@ -11,6 +11,7 @@ public:
     MOCK_METHOD(int, Cbind, (int, const struct sockaddr *, socklen_t), (override));
     MOCK_METHOD(int, Clisten, (int, int), (override));
     MOCK_METHOD(int, Caccept, (int, struct sockaddr *, socklen_t *), (override));
+    MOCK_METHOD(ssize_t, Crecvfrom, (int, char *, size_t, int, struct sockaddr *, socklen_t *), (override));
 };
 
 class WebSocketTest : public ::testing::Test
@@ -31,8 +32,14 @@ protected:
     {
     }
 
-    int getclientfd(){
+    int getclientfd()
+    {
         return ws->_client_fd;
+    }
+
+    char *getbuffer_p()
+    {
+        return ws->_buf;
     }
 };
 

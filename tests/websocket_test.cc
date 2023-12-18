@@ -49,7 +49,7 @@ namespace
     TEST_F(WebSocketTest, testacceptSuccessAccept)
     {
         EXPECT_CALL(mockSys, Caccept(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(888));
-        ws->accept();
+        EXPECT_NO_THROW(ws->accept());
         EXPECT_EQ(getclientfd(), 888);
     }
 
@@ -70,6 +70,21 @@ namespace
                      SocketException);
     }
 
-    
+    TEST_F(WebSocketTest, testrecvfromSuccess)
+    {
+        char *buf_p = getbuffer_p();
+        ::std::string recv_message;
+        EXPECT_CALL(mockSys, Crecvfrom(::testing::_, buf_p,
+                                       2048, 0, ::testing::_, ::testing::_))
+            .WillOnce(::testing::Return(10));
+
+        // Set the buffer with test data before calling recvfrom
+        const char *testData = "TTTTTTTTTT";
+        memcpy(buf_p, testData, 10); // Copy test data to the buffer
+
+        EXPECT_NO_THROW(ws->recvfrom(recv_message));
+
+        EXPECT_EQ(recv_message, "TTTTTTTTTT");
+    }
 
 }

@@ -24,6 +24,11 @@ namespace myWebSocket
         {
             return accept(sockfd, addr, addrlen);
         }
+        ssize_t Crecvfrom(int socket, char *buffer, size_t length, int flags,
+                          struct sockaddr *address, socklen_t *address_len) override
+        {
+            return recvfrom(socket, (void *)buffer, length, flags, address, address_len);
+        }
     };
 
     // Concrete Web Socket
@@ -42,7 +47,7 @@ namespace myWebSocket
         }
         void init() override;
         void accept() override;
-        int recvfrom() override;
+        void recvfrom(::std::string & message) override;
         void close() override;
 
     private:
@@ -50,6 +55,7 @@ namespace myWebSocket
         int _server_fd, _client_fd;
         struct sockaddr_in _server_address, _client_address;
         socklen_t _client_address_len;
+        char _buf[2048];
     };
 
     // Concrete factory for Web Socket

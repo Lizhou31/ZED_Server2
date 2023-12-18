@@ -14,7 +14,7 @@ class Socket
 public:
     virtual void init() = 0;
     virtual void accept() = 0;
-    virtual int recvfrom() = 0;
+    virtual void recvfrom(::std::string &) = 0;
     virtual void close() = 0;
     virtual ~Socket() {}
 };
@@ -34,6 +34,8 @@ public:
     virtual int Cbind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) = 0;
     virtual int Clisten(int sockfd, int backlog) = 0;
     virtual int Caccept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) = 0;
+    virtual ssize_t Crecvfrom(int socket, char *buffer, size_t length, int flags,
+                              struct sockaddr *address, socklen_t *address_len) = 0;
 };
 
 // Exception

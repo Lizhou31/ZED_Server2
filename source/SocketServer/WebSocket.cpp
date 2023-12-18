@@ -25,8 +25,13 @@ namespace myWebSocket
             throw SocketException("Socket accept error");
         }
     }
-    int WebSocket::recvfrom()
+    void WebSocket::recvfrom(::std::string &message)
     {
+        ssize_t msglen = systemSocket->Crecvfrom(_client_fd, _buf, 2048, 0,
+                                                 (struct sockaddr *)&_client_address, &_client_address_len);
+        // Put tailing characters
+        _buf[msglen] = 0;
+        message += _buf;
     }
     void WebSocket::close()
     {
