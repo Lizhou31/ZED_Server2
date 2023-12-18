@@ -3,7 +3,6 @@
 
 #include "Socket.hpp"
 
-
 class SocketServer {
 private:
     SocketFactory* factory;
@@ -12,6 +11,7 @@ private:
 public:
     SocketServer(SocketFactory* factory): factory(factory), socket(nullptr){};
     void init(int port);
+    void waiting_connection();
     void shutdown();
     ~SocketServer(){
         shutdown();

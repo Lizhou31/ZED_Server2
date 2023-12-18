@@ -20,14 +20,6 @@ public:
     virtual ~Socket() {}
 };
 
-// Abstraction factory interface
-class SocketFactory
-{
-public:
-    virtual Socket *createSocket() = 0;
-    virtual ~SocketFactory() {}
-};
-
 class ISystemSocket
 {
 public:
@@ -38,6 +30,14 @@ public:
     virtual ssize_t Crecvfrom(int socket, char *buffer, size_t length, int flags,
                               struct sockaddr *address, socklen_t *address_len) = 0;
     virtual int Cclose(int sockfd) = 0;
+};
+
+// Abstraction factory interface
+class SocketFactory
+{
+public:
+    virtual Socket *createSocket(int) = 0;
+    virtual ~SocketFactory() {}
 };
 
 // Exception

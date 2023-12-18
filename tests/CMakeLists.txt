@@ -14,9 +14,19 @@ target_link_libraries(
     GTest::gmock
     SocketServer
 )
+add_executable(socketserver_test ${CMAKE_CURRENT_SOURCE_DIR}/socketserver_test.cc )
+target_link_libraries(
+    socketserver_test
+    PRIVATE
+    GTest::gtest_main
+    GTest::gmock
+    SocketServer
+)
 
 # Include the directory
 target_include_directories(websocket_test PRIVATE ../include/)
+target_include_directories(socketserver_test PRIVATE ../include/)
 
 # Add teh test to be run
 gtest_discover_tests(websocket_test)
+gtest_discover_tests(socketserver_test)
