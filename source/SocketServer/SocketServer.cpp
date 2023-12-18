@@ -3,20 +3,32 @@
 void SocketServer::init(int port)
 {
     socket = factory->createSocket(port);
-    try{
-        socket->init();
+    try
+    {
+        socket->m_init();
     }
-    catch(SocketException &e){
+    catch (SocketException &e)
+    {
         std::cerr << "Error occurred: " << e.what() << std::endl;
-        socket->closeServer();
+        socket->m_closeServer();
     }
 }
 
-void waiting_connection(){
-
+void SocketServer::waiting_connection()
+{
+    if(!socket){
+        throw SocketException("Faied waiting connection before init");
+    }
+    try{
+        socket->m_accept();
+    }
+    catch (SocketException &e)
+    {
+        std::cerr << "Error occurred: " << e.what() << std::endl;
+        socket->m_closeServer();
+    }
 }
 
 void SocketServer::shutdown()
 {
-    
 }

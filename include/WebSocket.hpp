@@ -23,11 +23,11 @@ namespace myWebSocket
 
             _server_fd = socket(AF_INET, SOCK_STREAM, 0);
         }
-        void init() override;
-        void accept() override;
-        void recvfrom(::std::string &message) override;
-        void closeConnection() override;
-        void closeServer() override;
+        void m_init() override;
+        void m_accept() override;
+        void m_recvfrom(::std::string &message) override;
+        void m_closeConnection() override;
+        void m_closeServer() override;
 
     private:
         ISystemSocket *systemSocket;

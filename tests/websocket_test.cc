@@ -6,7 +6,7 @@ namespace
         EXPECT_CALL(mockSys, Cbind(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(0));
         EXPECT_CALL(mockSys, Clisten(::testing::_, 1)).Times(1).WillOnce(::testing::Return(0));
 
-        EXPECT_NO_THROW(ws->init());
+        EXPECT_NO_THROW(ws->m_init());
     }
 
     TEST_F(WebSocketTest, testinitFailedBind)
@@ -16,7 +16,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->init();
+                ws->m_init();
             }
             catch (const SocketException &e)
             {
@@ -35,7 +35,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->init();
+                ws->m_init();
             }
             catch (const SocketException &e)
             {
@@ -49,7 +49,7 @@ namespace
     TEST_F(WebSocketTest, testacceptSuccessAccept)
     {
         EXPECT_CALL(mockSys, Caccept(::testing::_, ::testing::_, ::testing::_)).Times(1).WillOnce(::testing::Return(888));
-        EXPECT_NO_THROW(ws->accept());
+        EXPECT_NO_THROW(ws->m_accept());
         EXPECT_EQ(getclientfd(), 888);
     }
 
@@ -59,7 +59,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->accept();
+                ws->m_accept();
             }
             catch (const SocketException &e)
             {
@@ -82,7 +82,7 @@ namespace
         const char *testData = "TTTTTTTTTT";
         memcpy(buf_p, testData, 10); // Copy test data to the buffer
 
-        EXPECT_NO_THROW(ws->recvfrom(recv_message));
+        EXPECT_NO_THROW(ws->m_recvfrom(recv_message));
 
         EXPECT_EQ(recv_message, "TTTTTTTTTT");
     }
@@ -98,7 +98,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->recvfrom(recv_message);
+                ws->m_recvfrom(recv_message);
             }
             catch (const SocketException &e)
             {
@@ -112,7 +112,7 @@ namespace
     TEST_F(WebSocketTest, testcloseConnectionSuccess)
     {
         EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(0));
-        EXPECT_NO_THROW(ws->closeConnection());
+        EXPECT_NO_THROW(ws->m_closeConnection());
     }
 
     TEST_F(WebSocketTest, testcloseConnectionFailed)
@@ -121,7 +121,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->closeConnection();
+                ws->m_closeConnection();
             }
             catch (const SocketException &e)
             {
@@ -135,7 +135,7 @@ namespace
     TEST_F(WebSocketTest, testcloseServerSuccess)
     {
         EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(0));
-        EXPECT_NO_THROW(ws->closeServer());
+        EXPECT_NO_THROW(ws->m_closeServer());
     }
 
     TEST_F(WebSocketTest, testcloseServerFailed)
@@ -144,7 +144,7 @@ namespace
         EXPECT_THROW({
             try
             {
-                ws->closeServer();
+                ws->m_closeServer();
             }
             catch (const SocketException &e)
             {

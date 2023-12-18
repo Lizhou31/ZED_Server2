@@ -3,19 +3,23 @@
 
 #include "Socket.hpp"
 
-class SocketServer {
-private:
-    SocketFactory* factory;
-    Socket* socket;
-
+class SocketServer
+{
 public:
-    SocketServer(SocketFactory* factory): factory(factory), socket(nullptr){};
+    SocketServer(SocketFactory *factory) : factory(factory), socket(nullptr){};
     void init(int port);
     void waiting_connection();
+    int getCommand();
     void shutdown();
-    ~SocketServer(){
+    ~SocketServer()
+    {
         shutdown();
     };
+
+private:
+    SocketFactory *factory;
+    Socket *socket;
+    std::string message;
 };
 
 #endif // SOCKETSERVER_H

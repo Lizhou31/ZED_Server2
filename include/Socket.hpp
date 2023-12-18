@@ -12,11 +12,11 @@
 class Socket
 {
 public:
-    virtual void init() = 0;
-    virtual void accept() = 0;
-    virtual void recvfrom(::std::string &) = 0;
-    virtual void closeConnection() = 0;
-    virtual void closeServer() = 0;
+    virtual void m_init() = 0;
+    virtual void m_accept() = 0;
+    virtual void m_recvfrom(::std::string &) = 0;
+    virtual void m_closeConnection() = 0;
+    virtual void m_closeServer() = 0;
     virtual ~Socket() {}
 };
 
