@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE "Debug")
 
+# include modules
+add_subdirectory(module)
+
 # ZED Configuration
 option(LINK_SHARED_ZED "Link with the ZED SDK shared executable" ON)
 find_package(ZED 3 REQUIRED)
@@ -34,7 +37,9 @@ add_library(SocketServer STATIC ${SRC_FILES})
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_link_libraries(${PROJECT_NAME}
+                        PRIVATE
                         ${ZED_LIBS}
+                        nlohmann_json::nlohmann_json
                         -lm)
 
 enable_testing()

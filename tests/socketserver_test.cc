@@ -1,5 +1,5 @@
 #include "socketserver_test.h"
-
+#include <nlohmann/json.hpp>
 TEST_F(SocketServerTest, socketserverinitSuccess)
 {
     EXPECT_CALL(mockfactory->mocksocket, m_init()).Times(1);
@@ -45,10 +45,24 @@ TEST_F(SocketServerTest, socketserverwaintingbeforeinit)
 TEST_F(SocketServerTest, socketserverwaitingconnectionFailed)
 {
     EXPECT_CALL(mockfactory->mocksocket, m_init()).Times(1);
-    EXPECT_CALL(mockfactory->mocksocket, m_accept()).Times(1)
-        .WillOnce(::testing::Throw(::SocketException("Mock Socket Error")));
+    EXPECT_CALL(mockfactory->mocksocket, m_accept()).Times(1).WillOnce(::testing::Throw(::SocketException("Mock Socket Error")));
     EXPECT_CALL(mockfactory->mocksocket, m_closeServer()).Times(1);
 
     EXPECT_NO_THROW(ss->init(8888));
     EXPECT_NO_THROW(ss->waiting_connection());
 }
+
+TEST_F(SocketServerTest, socketservergetcommandSuccess)
+{
+    EXPECT_CALL(mockfactory->mocksocket, m_init()).Times(1);
+    EXPECT_CALL(mockfactory->mocksocket, m_accept()).Times(1);
+    EXPECT_CALL(mockfactory->mocksocket, m_recvfrom(::testing::_)).Times(1);
+    EXPECT_NO_THROW(ss->init(8888));
+    EXPECT_NO_THROW(ss->waiting_connection());
+    setMessageTest();
+    EXPECT_NO_THROW(ss->getCommand());
+    EXPECT_EQ("Test", getMessage());
+
+
+}
+

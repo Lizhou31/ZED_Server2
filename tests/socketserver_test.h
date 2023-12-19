@@ -2,48 +2,55 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-namespace 
+class MockSocketImp : public Socket
 {
-    class MockSocketImp : public Socket
-    {
-    public:
-        MOCK_METHOD(void, m_init, (), (override));
-        MOCK_METHOD(void, m_accept, (), (override));
-        MOCK_METHOD(void, m_recvfrom, (::std::string &), (override));
-        MOCK_METHOD(void, m_closeConnection, (), (override));
-        MOCK_METHOD(void, m_closeServer, (), (override));
-    };
+public:
+    MOCK_METHOD(void, m_init, (), (override));
+    MOCK_METHOD(void, m_accept, (), (override));
+    MOCK_METHOD(void, m_recvfrom, (::std::string &), (override));
+    MOCK_METHOD(void, m_closeConnection, (), (override));
+    MOCK_METHOD(void, m_closeServer, (), (override));
+};
 
-    class MockSocketFactory : public SocketFactory
+class MockSocketFactory : public SocketFactory
+{
+public:
+    MockSocketFactory() {}
+    Socket *createSocket(int port) override
     {
-    public:
-        MockSocketFactory() {}
-        Socket *createSocket(int port) override
-        {
-            return &mocksocket;
-        }
+        return &mocksocket;
+    }
+    MockSocketImp mocksocket;
+};
+
+class SocketServerTest : public ::testing::Test
+{
+protected:
+    MockSocketFactory *mockfactory;
+    std::unique_ptr<::SocketServer> ss;
+    SocketServerTest() {}
+    ~SocketServerTest() override
+    {
+    }
+    void SetUp() override
+    {
         MockSocketImp mocksocket;
-    };
+        mockfactory = new MockSocketFactory();
+        ss = std::make_unique<::SocketServer>(mockfactory);
+    }
 
-    class SocketServerTest : public ::testing::Test
+    void TearDown() override
     {
-    protected:
-        MockSocketFactory *mockfactory;
-        std::unique_ptr<::SocketServer> ss;
-        SocketServerTest() {}
-        ~SocketServerTest() override
-        {
-        }
-        void SetUp() override
-        {
-            MockSocketImp mocksocket;
-            mockfactory = new MockSocketFactory();
-            ss = std::make_unique<::SocketServer>(mockfactory);
-        }
+        delete mockfactory;
+    }
 
-        void TearDown() override
-        {
-            delete mockfactory;
-        }
-    };
-}
+    ::std::string &getMessage()
+    {
+        return ss->message;
+    }
+
+    void setMessageTest()
+    {
+        ss->message = "Test";
+    }
+};

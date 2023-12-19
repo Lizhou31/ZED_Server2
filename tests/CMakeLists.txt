@@ -20,6 +20,7 @@ target_link_libraries(
     PRIVATE
     GTest::gtest_main
     GTest::gmock
+    nlohmann_json::nlohmann_json
     SocketServer
 )
 

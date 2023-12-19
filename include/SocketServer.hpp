@@ -2,10 +2,12 @@
 #define SOCKETSERVER_H
 
 #include "Socket.hpp"
+class SocketServerTest;
 
 class SocketServer
 {
 public:
+    friend class ::SocketServerTest;
     SocketServer(SocketFactory *factory) : factory(factory), socket(nullptr){};
     void init(int port);
     void waiting_connection();

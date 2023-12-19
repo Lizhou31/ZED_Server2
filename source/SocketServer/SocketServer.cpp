@@ -29,6 +29,10 @@ void SocketServer::waiting_connection()
     }
 }
 
+int SocketServer::getCommand(){
+    socket->m_recvfrom(message);
+}
+
 void SocketServer::shutdown()
 {
 }
