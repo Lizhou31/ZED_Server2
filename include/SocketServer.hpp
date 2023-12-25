@@ -2,6 +2,7 @@
 #define SOCKETSERVER_H
 
 #include "Socket.hpp"
+#include "CommandSolver.hpp"
 class SocketServerTest;
 
 class SocketServer

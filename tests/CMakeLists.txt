@@ -14,20 +14,39 @@ target_link_libraries(
     GTest::gmock
     SocketServer
 )
+
 add_executable(socketserver_test ${CMAKE_CURRENT_SOURCE_DIR}/socketserver_test.cc )
 target_link_libraries(
     socketserver_test
     PRIVATE
     GTest::gtest_main
     GTest::gmock
-    nlohmann_json::nlohmann_json
     SocketServer
+)
+
+add_executable(commandsolver_test ${CMAKE_CURRENT_SOURCE_DIR}/commandsolver_test.cc)
+target_link_libraries(
+    commandsolver_test
+    PRIVATE
+    GTest::gtest_main
+    GTest::gmock
+    nlohmann_json::nlohmann_json
+    CommandSolver
 )
 
 # Include the directory
 target_include_directories(websocket_test PRIVATE ../include/)
 target_include_directories(socketserver_test PRIVATE ../include/)
+target_include_directories(commandsolver_test PRIVATE ../include/)
 
 # Add teh test to be run
 gtest_discover_tests(websocket_test)
 gtest_discover_tests(socketserver_test)
+gtest_discover_tests(commandsolver_test)
+
+# Assuming your test JSON files are in "tests/test_data" directory
+set(TEST_DATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test_data")
+
+# Copy the test data to the build directory
+file(COPY ${TEST_DATA_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+

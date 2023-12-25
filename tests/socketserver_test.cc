@@ -1,5 +1,5 @@
 #include "socketserver_test.h"
-#include <nlohmann/json.hpp>
+
 TEST_F(SocketServerTest, socketserverinitSuccess)
 {
     EXPECT_CALL(mockfactory->mocksocket, m_init()).Times(1);

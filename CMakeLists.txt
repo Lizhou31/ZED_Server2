@@ -27,20 +27,27 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # Add source files
-file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
+file(GLOB_RECURSE SOCKETSERVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/SocketServer/*.cpp)
+file(GLOB_RECURSE COMMANDSOLVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/CommandSolver/*.cpp)
 
 # Add the library
-
-add_library(SocketServer STATIC ${SRC_FILES})
+add_library(SocketServer STATIC ${SOCKETSERVER_SRC_FILES})
+add_library(CommandSolver STATIC ${COMMANDSOLVER_SRC_FILES})
 
 # Add the executable
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${PROJECT_NAME} 
+    ${COMMANDSOLVER_SRC_FILES} 
+    ${SOCKETSERVER_SRC_FILES} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp)
 
 target_link_libraries(${PROJECT_NAME}
                         PRIVATE
                         ${ZED_LIBS}
                         nlohmann_json::nlohmann_json
                         -lm)
+target_link_libraries(CommandSolver
+                        PRIVATE
+                        nlohmann_json::nlohmann_json)
 
 enable_testing()
 add_subdirectory(tests)
