@@ -27,7 +27,7 @@ namespace commandsolver
                                                                                    {
                                                                                         
                                                                                    };
-        void execute() override{};
+        void execute() override;
 
     private:
         std::string id;

@@ -1,3 +1,5 @@
+set(cppzmq_DIR "/usr/local/share/cmake/cppzmq")
+find_package(cppzmq REQUIRED)
 include(FetchContent)
 
 FetchContent_Declare(
