@@ -6,21 +6,26 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE "Debug")
 
+option(DEPLOYMENT_ENV "Build configuration for deployment" OFF)
+
 # include modules
 add_subdirectory(module)
 
-# ZED Configuration
-option(LINK_SHARED_ZED "Link with the ZED SDK shared executable" ON)
-find_package(ZED 3 REQUIRED)
-find_package(CUDA ${ZED_CUDA_VERSION} REQUIRED)
 
-include_directories(${ZED_INCLUDE_DIRS})
-include_directories(${CUDA_INCLUDE_DIRS})
+if(DEPLOYMENT_ENV)
+    # ZED Configuration
+    option(LINK_SHARED_ZED "Link with the ZED SDK shared executable" ON)
+    find_package(ZED 3 REQUIRED)
+    find_package(CUDA ${ZED_CUDA_VERSION} REQUIRED)
 
-if (LINK_SHARED_ZED)
-    SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
-else()
-    SET(ZED_LIBS ${ZED_STATIC_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_LIBRARY})
+    include_directories(${ZED_INCLUDE_DIRS})
+    include_directories(${CUDA_INCLUDE_DIRS})
+
+    if (LINK_SHARED_ZED)
+        SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
+    else()
+        SET(ZED_LIBS ${ZED_STATIC_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_LIBRARY})
+    endif()
 endif()
 
 # Include directories
@@ -44,12 +49,21 @@ add_executable(${PROJECT_NAME}
     ${SIMPLEPUBSUB_SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp)
 
-target_link_libraries(${PROJECT_NAME}
-                        PRIVATE
-                        ${ZED_LIBS}
-                        SimplePubSub
-                        SocketServer
-                        -lm)
+if(DEPLOYMENT_ENV)
+    target_link_libraries(${PROJECT_NAME}
+                            PRIVATE
+                            ${ZED_LIBS}
+                            SimplePubSub
+                            SocketServer
+                            -lm)
+else()
+    target_link_libraries(${PROJECT_NAME}
+                            PRIVATE
+                            SimplePubSub
+                            SocketServer
+                            -lm)
+endif()
+
 target_link_libraries(CommandSolver
                         PUBLIC
                         nlohmann_json::nlohmann_json)
