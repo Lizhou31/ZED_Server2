@@ -34,12 +34,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 # Add source files
 file(GLOB_RECURSE SOCKETSERVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/SocketServer/*.cpp)
 file(GLOB_RECURSE COMMANDSOLVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/CommandSolver/*.cpp)
-file(GLOB_RECURSE SIMPLEPUBSUB_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/SimplePubSub/*.cpp)
 
 # Add the library
 add_library(SocketServer STATIC ${SOCKETSERVER_SRC_FILES})
 add_library(CommandSolver STATIC ${COMMANDSOLVER_SRC_FILES})
-add_library(SimplePubSub STATIC ${SIMPLEPUBSUB_SRC_FILES})
 
 
 # Add the executable
@@ -53,13 +51,11 @@ if(DEPLOYMENT_ENV)
     target_link_libraries(${PROJECT_NAME}
                             PRIVATE
                             ${ZED_LIBS}
-                            SimplePubSub
                             SocketServer
                             -lm)
 else()
     target_link_libraries(${PROJECT_NAME}
                             PRIVATE
-                            SimplePubSub
                             SocketServer
                             -lm)
 endif()
@@ -67,13 +63,9 @@ endif()
 target_link_libraries(CommandSolver
                         PUBLIC
                         nlohmann_json::nlohmann_json)
-target_link_libraries(SimplePubSub
-                        PRIVATE
-                        zmq)
 target_link_libraries(SocketServer
                         PUBLIC
-                        CommandSolver
-                        SimplePubSub)
+                        CommandSolver)
 
 enable_testing()
 add_subdirectory(tests)

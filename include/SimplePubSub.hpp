@@ -13,56 +13,122 @@
 
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 #include <iostream>
-#include <string>
-
 namespace simplepubsub
 {
-    class publish_worker{
-        
-    };
     class Publisher
     {
     public:
-        Publisher()
+        Publisher(zmq::context_t *ctx) : socket(*ctx, ZMQ_PUB), keepRunning(true)
         {
-            socket.bind("inproc://my_endpoint");
+            socket.bind("inproc://zedserver");
+            senderThread = std::thread(&Publisher::processMessageQueue, this);
         }
 
-        void publish(const std::string &data)
+        ~Publisher()
         {
-            zmq::message_t message(data.begin(), data.end());
-            socket.send(message, zmq::send_flags::none);
+            keepRunning = false;
+            messageQueueCond.notify_all();
+            senderThread.join();
+            socket.close();
+        }
+
+        void publish(const std::string &topic, const std::string &data)
+        {
+            std::lock_guard<std::mutex> lock(queueMutex);
+            messageQueue.emplace(topic, data);
+            messageQueueCond.notify_one();
         }
 
     private:
-        zmq::context_t context;
-        zmq::socket_t socket{context, zmq::socket_type::pub};
+        zmq::socket_t socket;
+        std::thread senderThread;
+        std::queue<std::pair<std::string, std::string>> messageQueue;
+        std::mutex queueMutex;
+        std::condition_variable messageQueueCond;
+        std::atomic<bool> keepRunning;
+
+        void processMessageQueue()
+        {
+            while (keepRunning)
+            {
+                std::unique_lock<std::mutex> lock(queueMutex);
+                messageQueueCond.wait(lock, [this]
+                                      { return !messageQueue.empty() || !keepRunning; });
+
+                while (!messageQueue.empty())
+                {
+                    std::string topic, data;
+                    std::tie(topic, data) = messageQueue.front();
+                    messageQueue.pop();
+                    lock.unlock();
+                    zmq::message_t topicMsg(topic.begin(), topic.end());
+                    zmq::message_t dataMsg(data.begin(), data.end());
+                    socket.send(topicMsg, zmq::send_flags::sndmore | zmq::send_flags::dontwait);
+                    socket.send(dataMsg, zmq::send_flags::dontwait);
+
+                    lock.lock();
+                }
+            }
+        }
     };
 
     class Subscriber
     {
     public:
-        Subscriber(zmq::context_t &context) : socket(context, zmq::socket_type::sub)
+        Subscriber(zmq::context_t *ctx, const std::string &topic) : socket(*ctx, ZMQ_SUB), keepRunning(true)
         {
-            socket.connect("inproc://my_endpoint");
-            socket.set(zmq::sockopt::subscribe, "");
+            socket.connect("inproc://zedserver");
+            socket.set(zmq::sockopt::subscribe, topic); // Subscribe to all topics
+            receiverThread = std::thread(&Subscriber::receiveMessages, this);
         }
 
-        void listen()
+        ~Subscriber()
         {
-            while (true)
-            {
-                zmq::message_t message;
-                socket.recv(message, zmq::recv_flags::none);
-                std::string data(static_cast<char *>(message.data()), message.size());
-                // Process data
-                std::cout << "Received: " << data << std::endl;
-            }
+            keepRunning = false;
+            receiverThread.join();
+            socket.close();
+        }
+
+        void onMessageReceived(const std::function<void(const std::string &, const std::string &)> &callback)
+        {
+            messageReceivedCallback = callback;
         }
 
     private:
         zmq::socket_t socket;
+        std::thread receiverThread;
+        std::atomic<bool> keepRunning;
+        std::function<void(const std::string &, const std::string &)> messageReceivedCallback;
+
+        void receiveMessages()
+        {
+            zmq::pollitem_t items[] = {{static_cast<void *>(socket), 0, ZMQ_POLLIN, 0}};
+            while (keepRunning)
+            {
+                zmq::poll(&items[0], 1, std::chrono::milliseconds(10)); // Non-blocking poll
+
+                if (items[0].revents & ZMQ_POLLIN)
+                {
+                    zmq::message_t topicMsg;
+                    zmq::message_t dataMsg;
+                    socket.recv(topicMsg, zmq::recv_flags::dontwait);
+                    socket.recv(dataMsg, zmq::recv_flags::dontwait);
+
+                    std::string topic(static_cast<char *>(topicMsg.data()), topicMsg.size());
+                    std::string data(static_cast<char *>(dataMsg.data()), dataMsg.size());
+                    if (messageReceivedCallback)
+                    {
+                        messageReceivedCallback(topic, data);
+                    }
+                }
+            }
+        }
     };
 
 }
