@@ -130,7 +130,26 @@ namespace simplepubsub
             }
         }
     };
+    class Agent
+    {
+    public:
+        Agent(){};
 
+        std::unique_ptr<Publisher> requestPublisher()
+        {
+            return std::make_unique<Publisher>(&ctx);
+        }
+
+        std::unique_ptr<Subscriber> requestSubcriber(const std::string &topic, const std::function<void(const std::string &, const std::string &)> &callback)
+        {
+            auto result = std::make_unique<Subscriber>(&ctx, "TestTopic");
+            result->onMessageReceived(callback);
+            return result;
+        }
+
+    private:
+        zmq::context_t ctx;
+    };
 }
 
 #endif /* __SIMPLEPUBSUB_HPP */

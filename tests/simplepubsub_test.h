@@ -9,6 +9,7 @@ protected:
 
     void SetUp() override
     {
+        callback_return = false;
     }
 
     void TearDown() override
