@@ -21,7 +21,12 @@
 #include <iostream>
 namespace simplepubsub
 {
-    class Publisher
+    class IPublisher
+    {
+        virtual void publish(const std::string &topic, const std::string &data) = 0;
+    };
+    
+    class Publisher: public IPublisher
     {
     public:
         Publisher(zmq::context_t *ctx) : socket(*ctx, ZMQ_PUB), keepRunning(true)
@@ -38,7 +43,7 @@ namespace simplepubsub
             socket.close();
         }
 
-        void publish(const std::string &topic, const std::string &data)
+        void publish(const std::string &topic, const std::string &data) override
         {
             std::lock_guard<std::mutex> lock(queueMutex);
             messageQueue.emplace(topic, data);

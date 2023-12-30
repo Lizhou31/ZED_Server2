@@ -3,6 +3,7 @@
 using namespace commandsolver;
 using namespace nlohmann;
 
-void CreateCommand::execute(){
-    
+void CreateCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
+{
+
 }

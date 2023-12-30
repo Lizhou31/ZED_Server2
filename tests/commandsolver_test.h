@@ -3,16 +3,18 @@
 #include <gmock/gmock.h>
 #include <fstream>
 
-class MockCreateCommand : public commandsolver::CreateCommand
+class MockPublish : public simplepubsub::IPublisher
 {
-    MOCK_METHOD(void, execute, (), (override));
+public:
+    MOCK_METHOD(void, publish, (const std::string &topic, const std::string &data), (override));
 };
 
 class CommandSolverTest : public ::testing::Test
 {
 protected:
-    commandsolver::CommandInvoker invoker;
+    std::unique_ptr<commandsolver::CommandInvoker> invoker;
     nlohmann::json testJson;
+    std::shared_ptr<MockPublish> mock_publish;
     CommandSolverTest() {}
     ~CommandSolverTest() override
     {
@@ -27,21 +29,27 @@ protected:
         file.close();
 
         testJson = nlohmann::json::parse(buffer.str());
+        
+        mock_publish = std::make_shared<MockPublish>();
+        invoker = std::make_unique<commandsolver::CommandInvoker>(mock_publish);
     }
 
     void TearDown() override
     {
     }
 
-    std::string &getCreateHeight(commandsolver::CreateCommand *ptr){
+    std::string &getCreateHeight(commandsolver::CreateCommand *ptr)
+    {
         return ptr->height;
     }
 
-    std::string &getCreateRedius(commandsolver::CreateCommand  *ptr){
+    std::string &getCreateRedius(commandsolver::CreateCommand *ptr)
+    {
         return ptr->redius;
     }
 
-    std::string &getCreateID(commandsolver::CreateCommand *ptr){
+    std::string &getCreateID(commandsolver::CreateCommand *ptr)
+    {
         return ptr->id;
     }
 };

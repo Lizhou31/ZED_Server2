@@ -33,5 +33,14 @@ TEST_F(CommandSolverTest, CreateCommandFailedLackArgs)
 
 TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
 {
-    // Create the file
+    // Publish the file name to "CreateFile Topic"
+    // TODO: Design the create file name logic.
+    auto command = testJson["CREATE"];
+    auto successCommand = command[0];
+    ASSERT_EQ(0, successCommand["Command"]);
+    
+    EXPECT_CALL(*mock_publish, publish("CreateFile", ::testing::_)).Times(1);
+    invoker->executeCommand(successCommand);
+    
+    
 }

@@ -1,6 +1,7 @@
 #ifndef COMMANDSOLVER_H
 #define COMMANDSOLVER_H
 
+#include "SimplePubSub.hpp"
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <string>
@@ -13,6 +14,7 @@ namespace commandsolver
     {
     public:
         virtual ~ICommand() {}
+        virtual void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) = 0;
         virtual void execute() = 0;
     };
 
@@ -23,12 +25,9 @@ namespace commandsolver
     public:
         CreateCommand(std::string _id, std::string _redius, std::string _height) : id(_id),
                                                                                    redius(_redius),
-                                                                                   height(_height)
-                                                                                   {
-                                                                                        
-                                                                                   };
-        void execute() override;
-
+                                                                                   height(_height){};
+        void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
+        void execute() override {};
     private:
         std::string id;
         std::string redius;
@@ -44,10 +43,12 @@ namespace commandsolver
             if (*commandType == 0) // CREATE
             {
                 auto args = commandJson["Args"];
-                try{
+                try
+                {
                     return std::make_unique<CreateCommand>(args[0], args[1], args[2]);
                 }
-                catch(std::exception &e){
+                catch (std::exception &e)
+                {
                     std::cerr << e.what() << std::endl;
                     throw;
                 }
@@ -60,14 +61,17 @@ namespace commandsolver
     class CommandInvoker
     {
     public:
+        CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr): _publisher_ptr(ptr){}
         void executeCommand(const nlohmann::json &commandJson)
         {
             auto command = CommandFactory::createCommand(commandJson);
             if (command)
             {
-                command->execute();
+                command->execute(_publisher_ptr);
             }
         }
+    private:
+        std::shared_ptr<simplepubsub::IPublisher> _publisher_ptr;
     };
 
 }
