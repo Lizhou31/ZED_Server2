@@ -8,9 +8,9 @@ TEST_F(CommandSolverTest, CreateCommandSuccessDecode)
     auto createcommand = commandsolver::CommandFactory::createCommand(successCommand);
     commandsolver::CreateCommand *ptr = dynamic_cast<commandsolver::CreateCommand *>(createcommand.get());
 
-    EXPECT_EQ("test", getCreateID(ptr));
-    EXPECT_EQ("10", getCreateRedius(ptr));
-    EXPECT_EQ("15", getCreateHeight(ptr));
+    EXPECT_EQ("test", getcreateFileDdata(ptr).id);
+    EXPECT_EQ("10", getcreateFileDdata(ptr).redius);
+    EXPECT_EQ("15", getcreateFileDdata(ptr).height);
 }
 
 TEST_F(CommandSolverTest, CreateCommandFailedLackArgs)
@@ -38,9 +38,13 @@ TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
     auto command = testJson["CREATE"];
     auto successCommand = command[0];
     ASSERT_EQ(0, successCommand["Command"]);
+    auto args = successCommand["Args"];
     
-    EXPECT_CALL(*mock_publish, publish("CreateFile", ::testing::_)).Times(1);
+    std::string data = nlohmann::json{{"id", args[0]},
+                                      {"redius", args[1]},
+                                      {"height", args[2]}}
+                           .dump();
+
+    EXPECT_CALL(*mock_publish, publish("CreateFile", data)).Times(1);
     invoker->executeCommand(successCommand);
-    
-    
 }

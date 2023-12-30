@@ -38,18 +38,8 @@ protected:
     {
     }
 
-    std::string &getCreateHeight(commandsolver::CreateCommand *ptr)
+    commandsolver::CreateCommand::createFileData &getcreateFileDdata(commandsolver::CreateCommand *ptr)
     {
-        return ptr->height;
-    }
-
-    std::string &getCreateRedius(commandsolver::CreateCommand *ptr)
-    {
-        return ptr->redius;
-    }
-
-    std::string &getCreateID(commandsolver::CreateCommand *ptr)
-    {
-        return ptr->id;
+        return ptr->data;
     }
 };

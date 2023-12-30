@@ -23,15 +23,21 @@ namespace commandsolver
         friend class ::CommandSolverTest;
 
     public:
-        CreateCommand(std::string _id, std::string _redius, std::string _height) : id(_id),
-                                                                                   redius(_redius),
-                                                                                   height(_height){};
+        CreateCommand(std::string _id, std::string _redius, std::string _height){
+            data.id = _id;
+            data.redius = _redius;
+            data.height = _height;
+        };
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
         void execute() override {};
     private:
-        std::string id;
-        std::string redius;
-        std::string height;
+        struct createFileData
+        {
+            std::string id;
+            std::string redius;
+            std::string height;
+        };
+        struct createFileData data;
     };
 
     class CommandFactory
@@ -45,6 +51,7 @@ namespace commandsolver
                 auto args = commandJson["Args"];
                 try
                 {
+                    std::cout << args.size() << std::endl;
                     return std::make_unique<CreateCommand>(args[0], args[1], args[2]);
                 }
                 catch (std::exception &e)

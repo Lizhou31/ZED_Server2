@@ -23,6 +23,7 @@ namespace simplepubsub
 {
     class IPublisher
     {
+    public:
         virtual void publish(const std::string &topic, const std::string &data) = 0;
     };
     
