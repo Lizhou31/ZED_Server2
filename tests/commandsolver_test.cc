@@ -57,3 +57,14 @@ TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
 
     invoker->executeCommand(successCommand);
 }
+
+TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
+{
+    auto command = testJson["GETINFO"];
+    auto successCommand = command[0];
+    ASSERT_EQ(5, successCommand["Command"]);
+
+    EXPECT_CALL(*mock_publish, publish("GetInfo", ::testing::_)).Times(1);
+
+    invoker->executeCommand(successCommand);
+}

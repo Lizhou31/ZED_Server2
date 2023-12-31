@@ -20,5 +20,10 @@
         {
             "Command": 4
         }
+    ],
+    "GETINFO": [
+        {
+            "Command": 5
+        }
     ]
 }

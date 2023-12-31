@@ -16,3 +16,7 @@ void StopCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
     ptr->publish("StopTest", "");
 }
 
+void GetInfoCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
+{
+    ptr->publish("GetInfo", "");
+}

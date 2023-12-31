@@ -50,6 +50,14 @@ namespace commandsolver
         void execute() override {}
     };
 
+    class GetInfoCommand : public ICommand
+    {
+    public:
+        GetInfoCommand(){};
+        void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
+        void execute() override {}
+    };
+
     class CommandFactory
     {
     public:
@@ -81,11 +89,22 @@ namespace commandsolver
                     throw;
                 }
             }
+            else if (*commandType == 5)
+            {
+                try
+                {
+                    return std::make_unique<GetInfoCommand>();
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << std::endl;
+                    throw;
+                }
+                
+            }
             // TODO: PROBE = 1
             // TODO: RESET = 2,
             // TODO: CHANGE = 3
-            // TODO: STOP = 4
-            // TODO: GETINFO = 5
         }
     };
 
