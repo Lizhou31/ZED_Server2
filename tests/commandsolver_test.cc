@@ -47,12 +47,23 @@ TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
     invoker->executeCommand(successCommand);
 }
 
+TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
+{
+    auto command = testJson["PROBE"];
+    auto successCommand = command[0];
+    ASSERT_EQ(1, successCommand["Command"]);
+
+    EXPECT_CALL(*mock_publish, publish("Probe", ::testing::_)).Times(1);
+
+    invoker->executeCommand(successCommand);
+}
+
 TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
 {
     auto command = testJson["STOP"];
     auto successCommand = command[0];
     ASSERT_EQ(4, successCommand["Command"]);
-    
+
     EXPECT_CALL(*mock_publish, publish("StopTest", ::testing::_)).Times(1);
 
     invoker->executeCommand(successCommand);

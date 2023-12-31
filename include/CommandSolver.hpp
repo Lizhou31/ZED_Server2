@@ -42,6 +42,14 @@ namespace commandsolver
         struct createFileData data;
     };
 
+    class ProbeCommand : public ICommand
+    {
+    public:
+        ProbeCommand(){};
+        void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
+        void execute() override {}
+    };
+
     class StopCommand : public ICommand
     {
     public:
@@ -77,7 +85,19 @@ namespace commandsolver
                     throw;
                 }
             }
-            else if (*commandType == 4)
+            else if (*commandType == 1) // PROBE
+            {
+                try
+                {
+                    return std::make_unique<ProbeCommand>();
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << e.what() << std::endl;
+                    throw;
+                }
+            }
+            else if (*commandType == 4) // STOP
             {
                 try
                 {
@@ -89,20 +109,18 @@ namespace commandsolver
                     throw;
                 }
             }
-            else if (*commandType == 5)
+            else if (*commandType == 5) // GETINFO
             {
                 try
                 {
                     return std::make_unique<GetInfoCommand>();
                 }
-                catch(const std::exception& e)
+                catch (const std::exception &e)
                 {
                     std::cerr << e.what() << std::endl;
                     throw;
                 }
-                
             }
-            // TODO: PROBE = 1
             // TODO: RESET = 2,
             // TODO: CHANGE = 3
         }

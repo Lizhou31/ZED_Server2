@@ -16,6 +16,11 @@
             ]
         }
     ],
+    "PROBE": [
+        {
+            "Command": 1
+        }
+    ],
     "STOP": [
         {
             "Command": 4
