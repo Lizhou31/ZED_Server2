@@ -1,15 +1,24 @@
 {
-    "CREATE" : [
-    {
-        "Command": 0,
-        "Args":[
-            "test","10","15"
-        ]
-    },
-    {
-        "Command": 0,
-        "Args":[
-            "1","test"
-        ]
-    }]
+    "CREATE": [
+        {
+            "Command": 0,
+            "Args": [
+                "test",
+                "10",
+                "15"
+            ]
+        },
+        {
+            "Command": 0,
+            "Args": [
+                "1",
+                "test"
+            ]
+        }
+    ],
+    "STOP": [
+        {
+            "Command": 4
+        }
+    ]
 }

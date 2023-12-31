@@ -23,13 +23,15 @@ namespace commandsolver
         friend class ::CommandSolverTest;
 
     public:
-        CreateCommand(std::string _id, std::string _redius, std::string _height){
+        CreateCommand(std::string _id, std::string _redius, std::string _height)
+        {
             data.id = _id;
             data.redius = _redius;
             data.height = _height;
         };
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
-        void execute() override {};
+        void execute() override{};
+
     private:
         struct createFileData
         {
@@ -38,6 +40,14 @@ namespace commandsolver
             std::string height;
         };
         struct createFileData data;
+    };
+
+    class StopCommand : public ICommand
+    {
+    public:
+        StopCommand(){};
+        void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
+        void execute() override {}
     };
 
     class CommandFactory
@@ -51,7 +61,6 @@ namespace commandsolver
                 auto args = commandJson["Args"];
                 try
                 {
-                    std::cout << args.size() << std::endl;
                     return std::make_unique<CreateCommand>(args[0], args[1], args[2]);
                 }
                 catch (std::exception &e)
@@ -60,15 +69,30 @@ namespace commandsolver
                     throw;
                 }
             }
-            // Handle other commands similarly
-            // ...
+            else if (*commandType == 4)
+            {
+                try
+                {
+                    return std::make_unique<StopCommand>();
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << e.what() << std::endl;
+                    throw;
+                }
+            }
+            // TODO: PROBE = 1
+            // TODO: RESET = 2,
+            // TODO: CHANGE = 3
+            // TODO: STOP = 4
+            // TODO: GETINFO = 5
         }
     };
 
     class CommandInvoker
     {
     public:
-        CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr): _publisher_ptr(ptr){}
+        CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr) : _publisher_ptr(ptr) {}
         void executeCommand(const nlohmann::json &commandJson)
         {
             auto command = CommandFactory::createCommand(commandJson);
@@ -77,6 +101,7 @@ namespace commandsolver
                 command->execute(_publisher_ptr);
             }
         }
+
     private:
         std::shared_ptr<simplepubsub::IPublisher> _publisher_ptr;
     };

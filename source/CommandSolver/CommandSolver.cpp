@@ -10,3 +10,9 @@ void CreateCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
                                     {"height", data.height}}
                                    .dump());
 }
+
+void StopCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
+{
+    ptr->publish("StopTest", "");
+}
+
