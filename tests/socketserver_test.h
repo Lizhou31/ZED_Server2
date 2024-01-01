@@ -26,7 +26,7 @@ public:
 class SocketServerTest : public ::testing::Test
 {
 protected:
-    MockSocketFactory *mockfactory;
+    std::unique_ptr<simplepubsub::Agent> agent;
     std::unique_ptr<::SocketServer> ss;
     SocketServerTest() {}
     ~SocketServerTest() override
@@ -34,14 +34,16 @@ protected:
     }
     void SetUp() override
     {
-        MockSocketImp mocksocket;
-        mockfactory = new MockSocketFactory();
-        ss = std::make_unique<::SocketServer>(mockfactory);
+        agent = std::make_unique<simplepubsub::Agent>();
+        auto ptr = agent->requestPublisher();
+        ss = std::make_unique<::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
+                                              std::move(ptr));
     }
 
     void TearDown() override
     {
-        delete mockfactory;
+        ss.reset();
+        agent.reset();
     }
 
     ::std::string &getMessage()
@@ -52,5 +54,10 @@ protected:
     void setMessageTest()
     {
         ss->message = "Test";
+    }
+
+    MockSocketFactory *getFactory()
+    {
+        return dynamic_cast<MockSocketFactory*>((ss->factory).get());
     }
 };

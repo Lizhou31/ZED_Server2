@@ -26,8 +26,8 @@ namespace simplepubsub
     public:
         virtual void publish(const std::string &topic, const std::string &data) = 0;
     };
-    
-    class Publisher: public IPublisher
+
+    class Publisher : public IPublisher
     {
     public:
         Publisher(zmq::context_t *ctx) : socket(*ctx, ZMQ_PUB), keepRunning(true)
@@ -146,7 +146,8 @@ namespace simplepubsub
             return std::make_unique<Publisher>(&ctx);
         }
 
-        std::unique_ptr<Subscriber> requestSubcriber(const std::string &topic, const std::function<void(const std::string &, const std::string &)> &callback)
+        std::unique_ptr<Subscriber> requestSubcriber(const std::string &topic,
+                                                     const std::function<void(const std::string &, const std::string &)> &callback)
         {
             auto result = std::make_unique<Subscriber>(&ctx, "TestTopic");
             result->onMessageReceived(callback);

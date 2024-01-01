@@ -44,7 +44,7 @@ TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
                            .dump();
 
     EXPECT_CALL(*mock_publish, publish("CreateFile", data)).Times(1);
-    invoker->executeCommand(successCommand);
+    invoker->executeCommand(successCommand.dump());
 }
 
 TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
@@ -55,7 +55,7 @@ TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
 
     EXPECT_CALL(*mock_publish, publish("Probe", ::testing::_)).Times(1);
 
-    invoker->executeCommand(successCommand);
+    invoker->executeCommand(successCommand.dump());
 }
 
 TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
@@ -66,7 +66,7 @@ TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
 
     EXPECT_CALL(*mock_publish, publish("StopTest", ::testing::_)).Times(1);
 
-    invoker->executeCommand(successCommand);
+    invoker->executeCommand(successCommand.dump());
 }
 
 TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
@@ -77,5 +77,5 @@ TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
 
     EXPECT_CALL(*mock_publish, publish("GetInfo", ::testing::_)).Times(1);
 
-    invoker->executeCommand(successCommand);
+    invoker->executeCommand(successCommand.dump());
 }

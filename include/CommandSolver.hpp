@@ -71,8 +71,8 @@ namespace commandsolver
     public:
         static std::unique_ptr<ICommand> createCommand(const nlohmann::json &commandJson)
         {
-            auto commandType = commandJson.find("Command");
-            if (*commandType == 0) // CREATE
+            auto commandType = commandJson["Command"];
+            if (commandType == 0) // CREATE
             {
                 auto args = commandJson["Args"];
                 try
@@ -85,7 +85,7 @@ namespace commandsolver
                     throw;
                 }
             }
-            else if (*commandType == 1) // PROBE
+            else if (commandType == 1) // PROBE
             {
                 try
                 {
@@ -97,7 +97,7 @@ namespace commandsolver
                     throw;
                 }
             }
-            else if (*commandType == 4) // STOP
+            else if (commandType == 4) // STOP
             {
                 try
                 {
@@ -109,7 +109,7 @@ namespace commandsolver
                     throw;
                 }
             }
-            else if (*commandType == 5) // GETINFO
+            else if (commandType == 5) // GETINFO
             {
                 try
                 {
@@ -130,8 +130,9 @@ namespace commandsolver
     {
     public:
         CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr) : _publisher_ptr(ptr) {}
-        void executeCommand(const nlohmann::json &commandJson)
+        void executeCommand(const std::string &rawCommand)
         {
+            auto commandJson = nlohmann::json::parse(rawCommand);
             auto command = CommandFactory::createCommand(commandJson);
             if (command)
             {

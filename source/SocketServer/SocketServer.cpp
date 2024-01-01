@@ -29,8 +29,17 @@ void SocketServer::waiting_connection()
     }
 }
 
-int SocketServer::getCommand(){
-    socket->m_recvfrom(message);
+void SocketServer::waiting_command(){
+    if(!socket){
+        throw SocketException("Failed waitting command before init.");
+    }
+    try{
+        socket->m_recvfrom(message);
+    }
+    catch (SocketException &e)
+    {
+        std::cerr << "Error occurred " << e.what() << std::endl;
+    }
 }
 
 void SocketServer::shutdown()

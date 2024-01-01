@@ -9,10 +9,13 @@ class SocketServer
 {
 public:
     friend class ::SocketServerTest;
-    SocketServer(SocketFactory *factory) : factory(factory), socket(nullptr){};
+    SocketServer(std::unique_ptr<::SocketFactory> _factory,
+                 std::shared_ptr<simplepubsub::IPublisher> invoker_pub) : factory(std::move(_factory)),
+                                                                          socket(nullptr),
+                                                                          invoker(invoker_pub){}
     void init(int port);
-    void waiting_connection();
-    int getCommand();
+    void waiting_connection(); // blocking
+    void waiting_command();    // blocking
     void shutdown();
     ~SocketServer()
     {
@@ -20,9 +23,10 @@ public:
     };
 
 private:
-    SocketFactory *factory;
+    std::unique_ptr<::SocketFactory> factory;
     Socket *socket;
     std::string message;
+    commandsolver::CommandInvoker invoker;
 };
 
 #endif // SOCKETSERVER_H
