@@ -79,3 +79,19 @@ TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
 
     invoker->executeCommand(successCommand.dump());
 }
+
+TEST_F(CommandSolverTest, CommandExecuteFailed)
+{
+    EXPECT_THROW({
+        try
+        {
+            invoker->executeCommand("Test");
+        }
+        catch (const std::invalid_argument &e)
+        {
+            EXPECT_STREQ("Input command error", e.what());
+            throw;
+        }
+    },
+                 std::invalid_argument);
+}

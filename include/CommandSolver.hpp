@@ -121,6 +121,8 @@ namespace commandsolver
                     throw;
                 }
             }
+            else
+                return nullptr;
             // TODO: RESET = 2,
             // TODO: CHANGE = 3
         }
@@ -132,12 +134,27 @@ namespace commandsolver
         CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr) : _publisher_ptr(ptr) {}
         void executeCommand(const std::string &rawCommand)
         {
-            auto commandJson = nlohmann::json::parse(rawCommand);
-            auto command = CommandFactory::createCommand(commandJson);
+            std::unique_ptr<ICommand> command;
+            try{
+                auto commandJson = nlohmann::json::parse(rawCommand);
+                command = CommandFactory::createCommand(commandJson);
+            }
+            catch (std::exception &e){
+                std::cerr << e.what() << std::endl;
+                throw std::invalid_argument("Input command error");
+            }
             if (command)
             {
                 command->execute(_publisher_ptr);
             }
+            else{
+                throw std::invalid_argument("Command decode error.");
+            }
+        }
+
+        ~CommandInvoker()
+        {
+            _publisher_ptr.reset();
         }
 
     private:
