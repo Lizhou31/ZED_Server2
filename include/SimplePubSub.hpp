@@ -24,6 +24,7 @@ namespace simplepubsub
     class IPublisher
     {
     public:
+        virtual ~IPublisher(){}
         virtual void publish(const std::string &topic, const std::string &data) = 0;
     };
 
@@ -40,7 +41,6 @@ namespace simplepubsub
             keepRunning = false;
             messageQueueCond.notify_all();
             senderThread.join();
-            socket->close();
         }
 
         void publish(const std::string &topic, const std::string &data) override
@@ -88,6 +88,7 @@ namespace simplepubsub
                     lock.lock();
                 }
             }
+            socket->close();
         }
     };
 
@@ -103,7 +104,6 @@ namespace simplepubsub
         {
             keepRunning = false;
             receiverThread.join();
-            socket->close();
         }
 
         void onMessageReceived(const std::function<void(const std::string &, const std::string &)> &callback)
@@ -148,6 +148,7 @@ namespace simplepubsub
                     }
                 }
             }
+            socket->close();
         }
     };
     class Agent
@@ -155,7 +156,7 @@ namespace simplepubsub
     public:
         Agent(){};
 
-        std::unique_ptr<Publisher> requestPublisher()
+        std::unique_ptr<IPublisher> requestPublisher()
         {
             return std::make_unique<Publisher>(&ctx);
         }

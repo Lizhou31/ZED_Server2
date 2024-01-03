@@ -19,7 +19,7 @@ TEST_F(SimplePubSubTest, test_agent_publish_subcribe)
 {
     simplepubsub::Agent agent;
 
-    std::unique_ptr<simplepubsub::Publisher> publisher_ptr;
+    std::unique_ptr<simplepubsub::IPublisher> publisher_ptr;
     publisher_ptr = agent.requestPublisher();
 
     std::unique_ptr<simplepubsub::Subscriber> subcriber_ptr;
