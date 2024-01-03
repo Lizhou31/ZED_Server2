@@ -14,8 +14,18 @@ public:
                                                                           socket(nullptr),
                                                                           invoker(invoker_pub){}
     void init(int port);
-    void waiting_connection(); // blocking
-    void waiting_command();    // blocking
+    void waiting_connection();  // blocking
+    void waiting_command();     // blocking
+    void execute_command();     // non-blocking
+
+    /* Subscriber */
+    // CreateFile
+    // GetInfo
+    // ZED_Status
+    // ZED_Position
+    // Probe
+    // Stop
+    
     void shutdown();
     ~SocketServer()
     {

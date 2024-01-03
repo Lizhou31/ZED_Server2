@@ -16,10 +16,12 @@ void SocketServer::init(int port)
 
 void SocketServer::waiting_connection()
 {
-    if(!socket){
+    if (!socket)
+    {
         throw SocketException("Faied waiting connection before init");
     }
-    try{
+    try
+    {
         socket->m_accept();
     }
     catch (SocketException &e)
@@ -29,17 +31,35 @@ void SocketServer::waiting_connection()
     }
 }
 
-void SocketServer::waiting_command(){
-    if(!socket){
+void SocketServer::waiting_command()
+{
+    if (!socket)
+    {
         throw SocketException("Failed waitting command before init.");
     }
-    try{
+    try
+    {
         socket->m_recvfrom(message);
     }
     catch (SocketException &e)
     {
         std::cerr << "Error occurred " << e.what() << std::endl;
     }
+}
+
+void SocketServer::execute_command()
+{
+    try
+    {
+        invoker.executeCommand(message);
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        message.clear();
+        throw;
+    }
+    message.clear();
 }
 
 void SocketServer::shutdown()

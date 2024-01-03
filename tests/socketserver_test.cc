@@ -1,5 +1,5 @@
 #include "socketserver_test.h"
-
+#include <iostream>
 TEST_F(SocketServerTest, socketserverinitSuccess)
 {
     EXPECT_CALL(getFactory()->mocksocket, m_init()).Times(1);
@@ -64,4 +64,18 @@ TEST_F(SocketServerTest, socketserverwaittingCommandSuccess)
     EXPECT_EQ("Test", getMessage());
 }
 
+TEST_F(SocketServerTest, socketserver_executeCommandSuccess)
+{
+    EXPECT_CALL(*raw_pub, publish(::testing::_, ::testing::_)).Times(1);
+    setMessage(getinfo_cmd);
+    EXPECT_NO_THROW(ss->execute_command());
+    EXPECT_EQ(getMessage(), "");
+}
 
+TEST_F(SocketServerTest, socketserver_executeCommandFailed)
+{
+    EXPECT_CALL(*raw_pub, publish(::testing::_, ::testing::_)).Times(0);
+    setMessageTest();
+    EXPECT_THROW(ss->execute_command(), std::invalid_argument);
+    EXPECT_EQ(getMessage(), "");
+}

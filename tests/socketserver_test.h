@@ -1,6 +1,7 @@
 #include "SocketServer.hpp"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <fstream> 
 
 class MockSocketImp : public Socket
 {
@@ -23,27 +24,45 @@ public:
     MockSocketImp mocksocket;
 };
 
+class MockPublisher : public simplepubsub::IPublisher
+{
+public:
+    MOCK_METHOD(void, publish, (const std::string &topic, const std::string &data), (override));
+};
+
 class SocketServerTest : public ::testing::Test
 {
 protected:
-    std::unique_ptr<simplepubsub::Agent> agent;
     std::unique_ptr<::SocketServer> ss;
+    std::unique_ptr<::MockPublisher> pub;
+    MockPublisher *raw_pub;
+    std::string getinfo_cmd;
     SocketServerTest() {}
     ~SocketServerTest() override
     {
     }
     void SetUp() override
     {
-        agent = std::make_unique<simplepubsub::Agent>();
-        auto ptr = agent->requestPublisher();
+        std::ifstream file("test_data/test_command.json");
+        ASSERT_TRUE(file.is_open());
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        file.close();
+
+        auto testJson = nlohmann::json::parse(buffer.str());
+        getinfo_cmd = (testJson["GETINFO"])[0].dump();
+
+        pub = std::make_unique<::MockPublisher>();
+        raw_pub = pub.get();
         ss = std::make_unique<::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
-                                              std::move(ptr));
+                                              std::move(pub));
     }
 
     void TearDown() override
     {
         ss.reset();
-        agent.reset();
+        raw_pub = nullptr;
     }
 
     ::std::string &getMessage()
@@ -56,8 +75,12 @@ protected:
         ss->message = "Test";
     }
 
+    void setMessage(std::string &_message){
+        ss->message = _message;
+    }
+
     MockSocketFactory *getFactory()
     {
-        return dynamic_cast<MockSocketFactory*>((ss->factory).get());
+        return dynamic_cast<MockSocketFactory *>((ss->factory).get());
     }
 };
