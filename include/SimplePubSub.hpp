@@ -18,13 +18,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-#include <iostream>
+
 namespace simplepubsub
 {
     class IPublisher
     {
     public:
-        virtual ~IPublisher(){}
+        virtual ~IPublisher() {}
         virtual void publish(const std::string &topic, const std::string &data) = 0;
     };
 
@@ -92,7 +92,14 @@ namespace simplepubsub
         }
     };
 
-    class Subscriber
+    class ISubscriber
+    {
+    public:
+        virtual ~ISubscriber() {}
+        virtual void onMessageReceived(const std::function<void(const std::string &, const std::string &)> &callback) = 0;
+    };
+
+    class Subscriber : public ISubscriber
     {
     public:
         Subscriber(zmq::context_t *_ctx, const std::string &topic) : ctx(_ctx), topic(topic), keepRunning(true), socketInit(false)
@@ -161,7 +168,7 @@ namespace simplepubsub
             return std::make_unique<Publisher>(&ctx);
         }
 
-        std::unique_ptr<Subscriber> requestSubcriber(const std::string &topic,
+        std::unique_ptr<ISubscriber> requestSubcriber(const std::string &topic,
                                                      const std::function<void(const std::string &, const std::string &)> &callback)
         {
             auto result = std::make_unique<Subscriber>(&ctx, topic);

@@ -22,7 +22,7 @@ TEST_F(SimplePubSubTest, test_agent_publish_subcribe)
     std::unique_ptr<simplepubsub::IPublisher> publisher_ptr;
     publisher_ptr = agent.requestPublisher();
 
-    std::unique_ptr<simplepubsub::Subscriber> subcriber_ptr;
+    std::unique_ptr<simplepubsub::ISubscriber> subcriber_ptr;
     std::function<void(const std::string &topic,
                        const std::string &data)>
         subscription_callback = [this](const std::string &topic, const std::string &data)

@@ -1,7 +1,6 @@
 #include "SocketServer.hpp"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <fstream> 
 
 class MockSocketImp : public Socket
 {
@@ -35,34 +34,41 @@ class SocketServerTest : public ::testing::Test
 protected:
     std::unique_ptr<::SocketServer> ss;
     std::unique_ptr<::MockPublisher> pub;
+    std::function<void(const std::string &, const std::string &)> callback;
     MockPublisher *raw_pub;
-    std::string getinfo_cmd;
+    nlohmann::json testJson;
+    std::string testFilePath;
+
     SocketServerTest() {}
     ~SocketServerTest() override
     {
     }
     void SetUp() override
     {
+        /* Load the test JSON file */
         std::ifstream file("test_data/test_command.json");
         ASSERT_TRUE(file.is_open());
-
         std::stringstream buffer;
         buffer << file.rdbuf();
         file.close();
+        testJson = nlohmann::json::parse(buffer.str());
 
-        auto testJson = nlohmann::json::parse(buffer.str());
-        getinfo_cmd = (testJson["GETINFO"])[0].dump();
-
+        /* Mock the publish function */
         pub = std::make_unique<::MockPublisher>();
         raw_pub = pub.get();
+
+        /* Init the SocketServer */
         ss = std::make_unique<::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
                                               std::move(pub));
+
+        testFilePath = "./Data/" + (((testJson["CREATE"])[0])["Args"])[0].get<std::string>() + ".csv";
     }
 
     void TearDown() override
     {
         ss.reset();
         raw_pub = nullptr;
+        remove(testFilePath.c_str());
     }
 
     ::std::string &getMessage()
@@ -75,12 +81,18 @@ protected:
         ss->message = "Test";
     }
 
-    void setMessage(std::string &_message){
+    void setMessage(std::string &_message)
+    {
         ss->message = _message;
     }
 
     MockSocketFactory *getFactory()
     {
         return dynamic_cast<MockSocketFactory *>((ss->factory).get());
+    }
+
+    bool fileExists(const std::string& filePath) {
+        std::ifstream file(filePath);
+        return file.good();
     }
 };

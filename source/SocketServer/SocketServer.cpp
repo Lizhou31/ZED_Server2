@@ -62,6 +62,13 @@ void SocketServer::execute_command()
     message.clear();
 }
 
+void SocketServer::createFile_callback(const std::string &topic, const std::string &data)
+{
+    auto file_name = (nlohmann::json::parse(data)["id"]).get<std::string>();
+    result_file.open("./Data/" + file_name + ".csv", std::ios::app);
+}
+
 void SocketServer::shutdown()
 {
+    result_file.close();
 }

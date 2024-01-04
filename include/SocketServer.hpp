@@ -1,6 +1,7 @@
 #ifndef SOCKETSERVER_H
 #define SOCKETSERVER_H
 
+#include <fstream>
 #include "Socket.hpp"
 #include "CommandSolver.hpp"
 class SocketServerTest;
@@ -18,9 +19,10 @@ public:
     void waiting_command();     // blocking
     void execute_command();     // non-blocking
 
-    /* Subscriber */
-    // CreateFile
-    // GetInfo
+    /* Subscriber Method */
+    void createFile_callback(const std::string &topic, const std::string &data);
+    void getInfo_callback(const std::string &topci, const std::string &data);
+    // TODO: 
     // ZED_Status
     // ZED_Position
     // Probe
@@ -37,6 +39,7 @@ private:
     Socket *socket;
     std::string message;
     commandsolver::CommandInvoker invoker;
+    std::ofstream result_file;
 };
 
 #endif // SOCKETSERVER_H

@@ -66,8 +66,9 @@ TEST_F(SocketServerTest, socketserverwaittingCommandSuccess)
 
 TEST_F(SocketServerTest, socketserver_executeCommandSuccess)
 {
-    EXPECT_CALL(*raw_pub, publish(::testing::_, ::testing::_)).Times(1);
-    setMessage(getinfo_cmd);
+    EXPECT_CALL(*raw_pub, publish("GetInfo", ::testing::_)).Times(1);
+    auto getInfoCMD = (testJson["GETINFO"])[0].dump();
+    setMessage(getInfoCMD);
     EXPECT_NO_THROW(ss->execute_command());
     EXPECT_EQ(getMessage(), "");
 }
@@ -78,4 +79,15 @@ TEST_F(SocketServerTest, socketserver_executeCommandFailed)
     setMessageTest();
     EXPECT_THROW(ss->execute_command(), std::invalid_argument);
     EXPECT_EQ(getMessage(), "");
+}
+
+TEST_F(SocketServerTest, socketsever_CreateFileSuccess)
+{
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->createFile_callback(topic, data); };
+    auto createCMD = (testJson["CREATE"])[0].dump();
+    setMessage(createCMD);
+    EXPECT_CALL(*raw_pub, publish("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    ss->execute_command();
+    ASSERT_TRUE(fileExists(testFilePath));
 }
