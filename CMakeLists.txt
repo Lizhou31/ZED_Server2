@@ -4,6 +4,7 @@ PROJECT(ZED_Server2)
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-Wall)
 
 # Check if the coverage configuration is defined
 if(CMAKE_BUILD_TYPE MATCHES "Coverage")

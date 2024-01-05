@@ -39,7 +39,7 @@ protected:
     nlohmann::json testJson;
     std::string testFilePath;
 
-    SocketServerTest() {}
+    SocketServerTest(): raw_pub(nullptr) {}
     ~SocketServerTest() override
     {
     }
@@ -81,7 +81,7 @@ protected:
         ss->message = "Test";
     }
 
-    void setMessage(std::string &_message)
+    void setMessage(const std::string &_message)
     {
         ss->message = _message;
     }
