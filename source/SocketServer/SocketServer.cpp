@@ -83,8 +83,8 @@ void SocketServer::stop_callback(const std::string &topic, const std::string &da
 }
 void SocketServer::probe_callback(const std::string &topic, const std::string &data)
 {
-    
-    // TODO: save the data
+    result_file << data << std::endl;
+    // TODO: save the location data
 }
 
 void SocketServer::shutdown()

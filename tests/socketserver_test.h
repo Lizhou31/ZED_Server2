@@ -39,7 +39,7 @@ protected:
     nlohmann::json testJson;
     std::string testFilePath;
 
-    SocketServerTest(): raw_pub(nullptr) {}
+    SocketServerTest() : raw_pub(nullptr) {}
     ~SocketServerTest() override
     {
     }
@@ -91,16 +91,28 @@ protected:
         return dynamic_cast<MockSocketFactory *>((ss->factory).get());
     }
 
-    bool fileExists(const std::string& filePath) {
+    bool fileExists(const std::string &filePath)
+    {
         std::ifstream file(filePath);
         return file.good();
     }
 
-    void createtestFile(){
+    void createtestFile()
+    {
         ss->result_file.open("./Data/test.csv", std::ios::app);
     }
 
-    bool isFileClose(){
+    bool isFileClose()
+    {
         return !ss->result_file.is_open();
+    }
+
+    std::string getFileResult()
+    {
+        std::ifstream file(testFilePath);
+        EXPECT_TRUE(file.is_open());
+        std::string result;
+        std::getline(file, result);
+        return result;
     }
 };

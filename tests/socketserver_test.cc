@@ -158,3 +158,18 @@ TEST_F(SocketServerTest, socketserver_StopSuccess)
 
     EXPECT_TRUE(isFileClose());
 }
+
+TEST_F(SocketServerTest, socketserver_ProbeSuccess)
+{
+    createtestFile();
+    ASSERT_TRUE(fileExists(testFilePath));
+
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->probe_callback(topic, data); };
+    auto probeCMD = (testJson["PROBE"])[0].dump();
+    setMessage(probeCMD);
+    EXPECT_CALL(*raw_pub, publish("Probe", "123")).Times(1).WillOnce(::testing::Invoke(callback));
+    ss->execute_command();
+
+    EXPECT_EQ("123", getFileResult());
+}
