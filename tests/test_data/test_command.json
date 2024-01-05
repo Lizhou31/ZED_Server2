@@ -26,7 +26,10 @@
     ],
     "PROBE": [
         {
-            "Command": 1
+            "Command": 1,
+            "Args":[
+                "123"
+            ]
         }
     ],
     "STOP": [

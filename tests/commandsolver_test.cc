@@ -52,8 +52,9 @@ TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
     auto command = testJson["PROBE"];
     auto successCommand = command[0];
     ASSERT_EQ(1, successCommand["Command"]);
+    auto args = successCommand["Args"][0].get<std::string>();
 
-    EXPECT_CALL(*mock_publish, publish("Probe", ::testing::_)).Times(1);
+    EXPECT_CALL(*mock_publish, publish("Probe", args)).Times(1);
 
     invoker->executeCommand(successCommand.dump());
 }

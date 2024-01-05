@@ -43,8 +43,11 @@ namespace commandsolver
     class ProbeCommand : public ICommand
     {
     public:
-        ProbeCommand(){};
+        ProbeCommand(std::string _sensor_data): sensor_data(_sensor_data){};
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
+
+    private:
+        std::string sensor_data;
     };
 
     class StopCommand : public ICommand
@@ -82,9 +85,10 @@ namespace commandsolver
             }
             else if (commandType == 1) // PROBE
             {
+                auto args = commandJson["Args"];
                 try
                 {
-                    return std::make_unique<ProbeCommand>();
+                    return std::make_unique<ProbeCommand>(args[0]);
                 }
                 catch (const std::exception &e)
                 {

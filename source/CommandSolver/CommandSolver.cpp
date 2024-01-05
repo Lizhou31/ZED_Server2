@@ -13,7 +13,7 @@ void CreateCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
 
 void ProbeCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
 {
-    ptr->publish("Probe", "");
+    ptr->publish("Probe", sensor_data);
 }
 
 void StopCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
