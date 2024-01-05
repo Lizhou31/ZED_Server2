@@ -4,7 +4,27 @@ PROJECT(ZED_Server2)
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE "Debug")
+
+# Check if the coverage configuration is defined
+if(CMAKE_BUILD_TYPE MATCHES "Coverage")
+    # Add compile options for coverage instrumentation
+    add_compile_options(--coverage)
+
+    # Link the coverage library
+    link_libraries(gcov)
+else()
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+# Custom target for running lcov
+add_custom_target(coverage
+    COMMAND lcov --directory . --capture --output-file coverage.info                                # Capture coverage info
+    COMMAND lcov --remove coverage.info '/usr/*' --output-file coverage.info                        # Filter out system libraries
+    COMMAND lcov --remove coverage.info '${CMAKE_BINARY_DIR}/_deps/**' --output-file coverage.info  # Filter out third-party libraries
+    COMMAND lcov --list coverage.info                                                               # Debug info
+    COMMAND genhtml coverage.info --output-directory coverage                                       # Generate HTML report
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}                                                           # Working directory
+)
 
 option(DEPLOYMENT_ENV "Build configuration for deployment" OFF)
 
