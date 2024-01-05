@@ -31,6 +31,7 @@ namespace myWebSocket
                                                  (struct sockaddr *)&_client_address, &_client_address_len);
         if (msglen == -1)
         {
+            // TODO: check error code.
             throw SocketException("Socket recvfrom error");
         }
         // Put tailing characters

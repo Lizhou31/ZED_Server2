@@ -52,7 +52,7 @@ TEST_F(SocketServerTest, socketserverwaitingConnectionFailed)
     EXPECT_NO_THROW(ss->waiting_connection());
 }
 
-TEST_F(SocketServerTest, socketserverwaittingCommandSuccess)
+TEST_F(SocketServerTest, socketserverwaitingCommandSuccess)
 {
     EXPECT_CALL(getFactory()->mocksocket, m_init()).Times(1);
     EXPECT_CALL(getFactory()->mocksocket, m_accept()).Times(1);
@@ -62,6 +62,29 @@ TEST_F(SocketServerTest, socketserverwaittingCommandSuccess)
     setMessageTest();
     EXPECT_NO_THROW(ss->waiting_command());
     EXPECT_EQ("Test", getMessage());
+}
+
+TEST_F(SocketServerTest, socketserverwaitingCommandFailed)
+{
+    EXPECT_CALL(getFactory()->mocksocket, m_init()).Times(1);
+    EXPECT_CALL(getFactory()->mocksocket, m_accept()).Times(1);
+    EXPECT_CALL(getFactory()->mocksocket, m_recvfrom(::testing::_)).Times(1).WillOnce([this]()
+                                                                                      { throw SocketException("test"); });
+    EXPECT_NO_THROW(ss->init(8888));
+    EXPECT_NO_THROW(ss->waiting_connection());
+
+    EXPECT_THROW({
+        try
+        {
+            ss->waiting_command();
+        }
+        catch (const std::runtime_error &e)
+        {
+            EXPECT_STREQ("Waiting command error.", e.what());
+            throw;
+        }
+    },
+                 std::runtime_error);
 }
 
 TEST_F(SocketServerTest, socketserverwiattingCommandBeforeInit)

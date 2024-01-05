@@ -43,7 +43,8 @@ void SocketServer::waiting_command()
     }
     catch (SocketException &e)
     {
-        std::cerr << "Error occurred " << e.what() << std::endl;
+        std::cerr << "Error occurred while receive" << e.what() << std::endl;
+        throw std::runtime_error("Waiting command error.");
     }
 }
 
@@ -82,7 +83,8 @@ void SocketServer::stop_callback(const std::string &topic, const std::string &da
 }
 void SocketServer::probe_callback(const std::string &topic, const std::string &data)
 {
-    // TODO
+    
+    // TODO: save the data
 }
 
 void SocketServer::shutdown()
