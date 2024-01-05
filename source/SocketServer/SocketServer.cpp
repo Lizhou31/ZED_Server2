@@ -66,6 +66,10 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
 {
     auto file_name = (nlohmann::json::parse(data)["id"]).get<std::string>();
     result_file.open("./Data/" + file_name + ".csv", std::ios::app);
+    if (result_file.fail())
+    {
+        throw std::runtime_error("Failed to open file: " + file_name);
+    }
 }
 
 void SocketServer::shutdown()

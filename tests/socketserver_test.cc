@@ -109,3 +109,14 @@ TEST_F(SocketServerTest, socketsever_CreateFileSuccess)
     ss->execute_command();
     ASSERT_TRUE(fileExists(testFilePath));
 }
+
+TEST_F(SocketServerTest, socketserver_CreateFileFailed)
+{
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->createFile_callback(topic, data); };
+    auto createCMD = (testJson["CREATE"])[2].dump();
+    std::string filename = createCMD;
+    setMessage(filename);
+    EXPECT_CALL(*raw_pub, publish("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    EXPECT_THROW(ss->execute_command(), std::runtime_error);
+}
