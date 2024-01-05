@@ -70,6 +70,19 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
     {
         throw std::runtime_error("Failed to open file: " + file_name);
     }
+    // TODO: Start the ZED server
+    // TODO: CreateFile while the directory doesn't exist?
+    // TODO: Refactor: might need to saperate the start and create file.
+}
+
+void SocketServer::stop_callback(const std::string &topic, const std::string &data)
+{
+    result_file.close();
+    // TODO: Stop the ZedServer.
+}
+void SocketServer::probe_callback(const std::string &topic, const std::string &data)
+{
+    // TODO
 }
 
 void SocketServer::shutdown()

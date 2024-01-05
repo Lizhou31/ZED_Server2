@@ -95,4 +95,12 @@ protected:
         std::ifstream file(filePath);
         return file.good();
     }
+
+    void createtestFile(){
+        ss->result_file.open("./Data/test.csv", std::ios::app);
+    }
+
+    bool isFileClose(){
+        return !ss->result_file.is_open();
+    }
 };

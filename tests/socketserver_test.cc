@@ -120,3 +120,18 @@ TEST_F(SocketServerTest, socketserver_CreateFileFailed)
     EXPECT_CALL(*raw_pub, publish("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
     EXPECT_THROW(ss->execute_command(), std::runtime_error);
 }
+
+TEST_F(SocketServerTest, socketserver_StopSuccess)
+{
+    createtestFile();
+    ASSERT_TRUE(fileExists(testFilePath));
+
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->stop_callback(topic, data); };
+    auto stopCMD = (testJson["STOP"])[0].dump();
+    setMessage(stopCMD);
+    EXPECT_CALL(*raw_pub, publish("StopTest", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    ss->execute_command();
+
+    EXPECT_TRUE(isFileClose());
+}
