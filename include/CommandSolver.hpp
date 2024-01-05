@@ -15,7 +15,6 @@ namespace commandsolver
     public:
         virtual ~ICommand() {}
         virtual void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) = 0;
-        virtual void execute() = 0;
     };
 
     class CreateCommand : public ICommand
@@ -30,7 +29,6 @@ namespace commandsolver
             data.height = _height;
         };
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
-        void execute() override{};
 
     private:
         struct createFileData
@@ -47,7 +45,6 @@ namespace commandsolver
     public:
         ProbeCommand(){};
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
-        void execute() override {}
     };
 
     class StopCommand : public ICommand
@@ -55,7 +52,6 @@ namespace commandsolver
     public:
         StopCommand(){};
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
-        void execute() override {}
     };
 
     class GetInfoCommand : public ICommand
@@ -63,7 +59,6 @@ namespace commandsolver
     public:
         GetInfoCommand(){};
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
-        void execute() override {}
     };
 
     class CommandFactory
@@ -135,21 +130,17 @@ namespace commandsolver
         void executeCommand(const std::string &rawCommand)
         {
             std::unique_ptr<ICommand> command;
-            try{
+            try
+            {
                 auto commandJson = nlohmann::json::parse(rawCommand);
                 command = CommandFactory::createCommand(commandJson);
             }
-            catch (std::exception &e){
+            catch (std::exception &e)
+            {
                 std::cerr << e.what() << std::endl;
                 throw std::invalid_argument("Input command error");
             }
-            if (command)
-            {
-                command->execute(_publisher_ptr);
-            }
-            else{
-                throw std::invalid_argument("Command decode error.");
-            }
+            command->execute(_publisher_ptr);
         }
 
         ~CommandInvoker()
