@@ -29,7 +29,7 @@ namespace myWebSocket
     {
         ssize_t msglen = systemSocket->Crecvfrom(_client_fd, _buf, 2048, 0,
                                                  (struct sockaddr *)&_client_address, &_client_address_len);
-        if (msglen == -1)
+        if (msglen <= 0)
         {
             // TODO: check error code.
             throw SocketException("Socket recvfrom error");

@@ -19,8 +19,7 @@ namespace myWebSocket
             bzero(&_server_address, sizeof(_server_address));
             _server_address.sin_family = AF_INET;
             _server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-            _server_address.sin_port = port;
-
+            _server_address.sin_port = htons(port);
             _server_fd = socket(AF_INET, SOCK_STREAM, 0);
         }
         void m_init() override;

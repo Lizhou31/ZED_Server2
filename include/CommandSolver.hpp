@@ -69,7 +69,7 @@ namespace commandsolver
     public:
         static std::unique_ptr<ICommand> createCommand(const nlohmann::json &commandJson)
         {
-            auto commandType = commandJson["Command"];
+            auto commandType = commandJson["Command"].get<int>();
             if (commandType == 0) // CREATE
             {
                 auto args = commandJson["Args"];

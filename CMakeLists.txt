@@ -73,11 +73,13 @@ if(DEPLOYMENT_ENV)
                             PRIVATE
                             ${ZED_LIBS}
                             SocketServer
+                            zmq
                             -lm)
 else()
     target_link_libraries(${PROJECT_NAME}
                             PRIVATE
                             SocketServer
+                            zmq
                             -lm)
 endif()
 
