@@ -113,7 +113,7 @@ namespace simplepubsub
             receiverThread.join();
         }
 
-        void onMessageReceived(const std::function<void(const std::string &, const std::string &)> &callback)
+        void onMessageReceived(const std::function<void(const std::string &, const std::string &)> &callback) override
         {
             while (!socketInit)
                 ;
@@ -158,18 +158,28 @@ namespace simplepubsub
             socket->close();
         }
     };
-    class Agent
+
+    class IAgent
+    {
+    public:
+        virtual ~IAgent(){};
+        virtual std::unique_ptr<IPublisher> requestPublisher() = 0;
+        virtual std::unique_ptr<ISubscriber> requestSubcriber(const std::string &topic,
+                                                              const std::function<void(const std::string &, const std::string &)> &callback) = 0;
+    };
+
+    class Agent : public IAgent
     {
     public:
         Agent(){};
 
-        std::unique_ptr<IPublisher> requestPublisher()
+        std::unique_ptr<IPublisher> requestPublisher() override
         {
             return std::make_unique<Publisher>(&ctx);
         }
 
         std::unique_ptr<ISubscriber> requestSubcriber(const std::string &topic,
-                                                     const std::function<void(const std::string &, const std::string &)> &callback)
+                                                      const std::function<void(const std::string &, const std::string &)> &callback) override
         {
             auto result = std::make_unique<Subscriber>(&ctx, topic);
             result->onMessageReceived(callback);

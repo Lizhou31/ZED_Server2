@@ -26,13 +26,30 @@ public:
 class MockPublisher : public simplepubsub::IPublisher
 {
 public:
-    MOCK_METHOD(void, publish, (const std::string &topic, const std::string &data), (override));
+    MOCK_METHOD(void, publish,
+                (const std::string &topic, const std::string &data), (override));
+};
+
+class MockSubscriber : public simplepubsub::ISubscriber
+{
+public:
+    MOCK_METHOD(void, onMessageReceived,
+                (const std::function<void(const std::string &, const std::string &)> &callback), (override));
+};
+
+class MockAgent : public simplepubsub::IAgent
+{
+public:
+    MOCK_METHOD(std::unique_ptr<simplepubsub::IPublisher>, requestPublisher, (), (override));
+    MOCK_METHOD(std::unique_ptr<simplepubsub::ISubscriber>, requestSubcriber,
+                (const std::string &topic, const std::function<void(const std::string &, const std::string &)> &callback), (override));
 };
 
 class SocketServerTest : public ::testing::Test
 {
 protected:
-    std::unique_ptr<::SocketServer> ss;
+    std::unique_ptr<mysocketserver::SocketServer> ss;
+    std::unique_ptr<::MockAgent> agent;
     std::unique_ptr<::MockPublisher> pub;
     std::function<void(const std::string &, const std::string &)> callback;
     MockPublisher *raw_pub;
@@ -57,9 +74,12 @@ protected:
         pub = std::make_unique<::MockPublisher>();
         raw_pub = pub.get();
 
+        /* Mock the Agent function */
+        agent = std::make_unique<::MockAgent>();
+
         /* Init the SocketServer */
-        ss = std::make_unique<::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
-                                              std::move(pub));
+        ss = std::make_unique<mysocketserver::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
+                                                            std::move(pub));
 
         testFilePath = "./Data/" + (((testJson["CREATE"])[0])["Args"])[0].get<std::string>() + ".csv";
     }
@@ -68,6 +88,7 @@ protected:
     {
         ss.reset();
         raw_pub = nullptr;
+        agent.reset();
         remove(testFilePath.c_str());
     }
 

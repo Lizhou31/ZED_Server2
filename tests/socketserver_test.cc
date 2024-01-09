@@ -173,3 +173,15 @@ TEST_F(SocketServerTest, socketserver_ProbeSuccess)
 
     EXPECT_EQ("123", getFileResult());
 }
+
+TEST_F(SocketServerTest, socketserver_registerSubscriber)
+{
+
+    EXPECT_CALL(*agent, requestSubcriber("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                          { return std::make_unique<MockSubscriber>(); }));
+    EXPECT_CALL(*agent, requestSubcriber("Probe", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                     { return std::make_unique<MockSubscriber>(); }));
+    EXPECT_CALL(*agent, requestSubcriber("StopTest", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                        { return std::make_unique<MockSubscriber>(); }));
+    ss->register_subscriber(*agent);
+}

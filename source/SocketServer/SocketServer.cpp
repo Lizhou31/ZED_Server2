@@ -1,5 +1,7 @@
 #include "SocketServer.hpp"
 
+using namespace mysocketserver;
+
 void SocketServer::init(int port)
 {
     socket = factory->createSocket(port);
@@ -44,6 +46,7 @@ void SocketServer::waiting_command()
     catch (SocketException &e)
     {
         std::cerr << "Error occurred while receive" << e.what() << std::endl;
+        result_file.close();
         throw std::runtime_error("Waiting command error.");
     }
 }
@@ -85,6 +88,18 @@ void SocketServer::probe_callback(const std::string &topic, const std::string &d
 {
     result_file << data << std::endl;
     // TODO: save the location data
+}
+
+void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
+{
+    topic_create = agent.requestSubcriber("CreateFile", [this](const std::string &topic, const std::string &data)
+                                          { createFile_callback(topic, data); });
+    topic_probe = agent.requestSubcriber("Probe", [this](const std::string &topic, const std::string &data)
+                                          { probe_callback(topic, data); });
+    topic_stop = agent.requestSubcriber("StopTest", [this](const std::string &topic, const std::string &data)
+                                          { stop_callback(topic, data); });
+    // topic_getInfo = agent.requestSubcriber("GetInfo", [this](const std::string &topic, const std::string &data)
+    //                                       { getInfo_callback(topic, data); });
 }
 
 void SocketServer::shutdown()
