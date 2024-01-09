@@ -8,6 +8,7 @@ public:
     MOCK_METHOD(void, m_init, (), (override));
     MOCK_METHOD(void, m_accept, (), (override));
     MOCK_METHOD(void, m_recvfrom, (::std::string &), (override));
+    MOCK_METHOD(void, m_sendto, (::std::string &), (override));
     MOCK_METHOD(void, m_closeConnection, (), (override));
     MOCK_METHOD(void, m_closeServer, (), (override));
 };

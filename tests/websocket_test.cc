@@ -109,6 +109,38 @@ namespace
                      SocketException);
     }
 
+    TEST_F(WebSocketTest, testsendtoSuccess)
+    {
+        std::string testData = "TTTTTTTTTT";
+        EXPECT_CALL(mockSys, Csendto(::testing::_, (void *)testData.c_str(), testData.length(),
+                                     ::testing::_, ::testing::_, ::testing::_))
+            .Times(1)
+            .WillOnce(::testing::Return(testData.length()));
+        EXPECT_NO_THROW(ws->m_sendto(testData));
+    }
+
+    TEST_F(WebSocketTest, testsendtoFailed)
+    {
+        std::string testData = "TTTTTTTTTT";
+        EXPECT_CALL(mockSys, Csendto(::testing::_, (void *)testData.c_str(), testData.length(),
+                                     ::testing::_, ::testing::_, ::testing::_))
+            .Times(1)
+            .WillOnce(::testing::Return(-1));
+
+        EXPECT_THROW({
+            try
+            {
+                ws->m_sendto(testData);
+            }
+            catch (const SocketException &e)
+            {
+                EXPECT_STREQ("Socket sendto error", e.what());
+                throw;
+            }
+        },
+                     SocketException);
+    }
+
     TEST_F(WebSocketTest, testcloseConnectionSuccess)
     {
         EXPECT_CALL(mockSys, Cclose(::testing::_)).WillOnce(::testing::Return(0));
@@ -154,5 +186,4 @@ namespace
         },
                      SocketException);
     }
-
 }

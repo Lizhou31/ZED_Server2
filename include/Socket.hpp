@@ -15,6 +15,7 @@ public:
     virtual void m_init() = 0;
     virtual void m_accept() = 0;
     virtual void m_recvfrom(::std::string &) = 0;
+    virtual void m_sendto(::std::string &) = 0;
     virtual void m_closeConnection() = 0;
     virtual void m_closeServer() = 0;
     virtual ~Socket() {}
@@ -29,6 +30,9 @@ public:
     virtual int Caccept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) = 0;
     virtual ssize_t Crecvfrom(int socket, char *buffer, size_t length, int flags,
                               struct sockaddr *address, socklen_t *address_len) = 0;
+    virtual ssize_t Csendto(int socket, const void *message, size_t length,
+           int flags, const struct sockaddr *dest_addr,
+           socklen_t dest_len) = 0;
     virtual int Cclose(int sockfd) = 0;
 };
 

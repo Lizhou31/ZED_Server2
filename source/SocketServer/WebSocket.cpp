@@ -17,6 +17,7 @@ namespace myWebSocket
             throw SocketException("Socket listen error");
         }
     }
+
     void WebSocket::m_accept()
     {
         _client_fd = systemSocket->Caccept(_server_fd, (struct sockaddr *)&_client_address, &_client_address_len);
@@ -25,6 +26,7 @@ namespace myWebSocket
             throw SocketException("Socket accept error");
         }
     }
+
     void WebSocket::m_recvfrom(::std::string &message)
     {
         ssize_t msglen = systemSocket->Crecvfrom(_client_fd, _buf, 2048, 0,
@@ -38,17 +40,31 @@ namespace myWebSocket
         _buf[msglen] = 0;
         message += _buf;
     }
+
+    void WebSocket::m_sendto(::std::string &message)
+    {
+        ssize_t msglen = systemSocket->Csendto(_client_fd, message.c_str(), message.length(), 0,
+                                               (struct sockaddr *)&_client_address, sizeof(_client_address));
+        if(msglen < 0){
+            // TODO: check error code.
+            throw SocketException("Socket sendto error");
+        }
+    }
+
     void WebSocket::m_closeConnection()
     {
         int ret = systemSocket->Cclose(_client_fd);
-        if (ret != 0){
+        if (ret != 0)
+        {
             throw SocketException("Socket connection close error");
         }
     }
+
     void WebSocket::m_closeServer()
     {
         int ret = systemSocket->Cclose(_server_fd);
-        if (ret != 0){
+        if (ret != 0)
+        {
             throw SocketException("Socket server close error");
         }
     }

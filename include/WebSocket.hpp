@@ -25,6 +25,7 @@ namespace myWebSocket
         void m_init() override;
         void m_accept() override;
         void m_recvfrom(::std::string &message) override;
+        void m_sendto(::std::string &message) override;
         void m_closeConnection() override;
         void m_closeServer() override;
 
@@ -56,6 +57,14 @@ namespace myWebSocket
         {
             return recvfrom(socket, (void *)buffer, length, flags, address, address_len);
         }
+
+        ssize_t Csendto(int socket, const void *message, size_t length,
+                        int flags, const struct sockaddr *dest_addr,
+                        socklen_t dest_len) override
+        {
+            return sendto(socket, message, length, flags, dest_addr, dest_len);
+        }
+
         int Cclose(int sockfd) override
         {
             return close(sockfd);
