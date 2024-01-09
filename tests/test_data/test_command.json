@@ -41,5 +41,11 @@
         {
             "Command": 5
         }
+    ],
+    "RETURNINFO": [
+        {
+            "Command": 6,
+            "Status": "OK"
+        }
     ]
 }

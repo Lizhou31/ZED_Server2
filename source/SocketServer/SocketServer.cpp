@@ -90,16 +90,29 @@ void SocketServer::probe_callback(const std::string &topic, const std::string &d
     // TODO: save the location data
 }
 
+void SocketServer::getInfo_callback(const std::string &topic, const std::string &data)
+{
+    std::string _message = pack_infoData();
+    try
+    {
+        socket->m_sendto(_message);
+    }
+    catch (SocketException &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
 {
     topic_create = agent.requestSubcriber("CreateFile", [this](const std::string &topic, const std::string &data)
                                           { createFile_callback(topic, data); });
     topic_probe = agent.requestSubcriber("Probe", [this](const std::string &topic, const std::string &data)
-                                          { probe_callback(topic, data); });
+                                         { probe_callback(topic, data); });
     topic_stop = agent.requestSubcriber("StopTest", [this](const std::string &topic, const std::string &data)
-                                          { stop_callback(topic, data); });
-    // topic_getInfo = agent.requestSubcriber("GetInfo", [this](const std::string &topic, const std::string &data)
-    //                                       { getInfo_callback(topic, data); });
+                                        { stop_callback(topic, data); });
+    topic_getInfo = agent.requestSubcriber("GetInfo", [this](const std::string &topic, const std::string &data)
+                                           { getInfo_callback(topic, data); });
 }
 
 void SocketServer::shutdown()

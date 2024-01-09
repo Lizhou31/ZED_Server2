@@ -129,7 +129,7 @@ TEST_F(SocketServerTest, socketsever_CreateFileSuccess)
     auto createCMD = (testJson["CREATE"])[0].dump();
     setMessage(createCMD);
     EXPECT_CALL(*raw_pub, publish("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
-    ss->execute_command();
+    EXPECT_NO_THROW(ss->execute_command());
     ASSERT_TRUE(fileExists(testFilePath));
 }
 
@@ -154,7 +154,7 @@ TEST_F(SocketServerTest, socketserver_StopSuccess)
     auto stopCMD = (testJson["STOP"])[0].dump();
     setMessage(stopCMD);
     EXPECT_CALL(*raw_pub, publish("StopTest", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
-    ss->execute_command();
+    EXPECT_NO_THROW(ss->execute_command());
 
     EXPECT_TRUE(isFileClose());
 }
@@ -169,9 +169,57 @@ TEST_F(SocketServerTest, socketserver_ProbeSuccess)
     auto probeCMD = (testJson["PROBE"])[0].dump();
     setMessage(probeCMD);
     EXPECT_CALL(*raw_pub, publish("Probe", "123")).Times(1).WillOnce(::testing::Invoke(callback));
-    ss->execute_command();
+    EXPECT_NO_THROW(ss->execute_command());
 
     EXPECT_EQ("123", getFileResult());
+}
+
+TEST_F(SocketServerTest, socketserver_packinfoData)
+{
+    set_zed_status(0);
+    const std::string result = pack_infoData_caller();
+    auto returnResult = (testJson["RETURNINFO"])[0].dump();
+    EXPECT_EQ(returnResult, result);
+}
+
+TEST_F(SocketServerTest, socketserver_getInfoSuccess)
+{
+    EXPECT_CALL(getFactory()->mocksocket, m_init()).Times(1);
+    EXPECT_CALL(getFactory()->mocksocket, m_accept()).Times(1);
+    EXPECT_NO_THROW(ss->init(8888));
+    EXPECT_NO_THROW(ss->waiting_connection());
+
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->getInfo_callback(topic, data); };
+
+    auto getInfoCMD = ((testJson["GETINFO"])[0]).dump();
+    setMessage(getInfoCMD);
+    EXPECT_CALL(*raw_pub, publish("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    set_zed_status(0);
+    std::string result = pack_infoData_caller();
+
+    EXPECT_CALL(getFactory()->mocksocket, m_sendto(result)).Times(1);
+    EXPECT_NO_THROW(ss->execute_command());
+}
+
+TEST_F(SocketServerTest, socketserver_getInfoFailed)
+{
+    EXPECT_CALL(getFactory()->mocksocket, m_init()).Times(1);
+    EXPECT_CALL(getFactory()->mocksocket, m_accept()).Times(1);
+    EXPECT_NO_THROW(ss->init(8888));
+    EXPECT_NO_THROW(ss->waiting_connection());
+
+    callback = [this](const std::string &topic, const std::string &data)
+    { ss->getInfo_callback(topic, data); };
+
+    auto getInfoCMD = ((testJson["GETINFO"])[0]).dump();
+    setMessage(getInfoCMD);
+    EXPECT_CALL(*raw_pub, publish("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    set_zed_status(0);
+    std::string result = pack_infoData_caller();
+
+    EXPECT_CALL(getFactory()->mocksocket, m_sendto(result)).Times(1).WillOnce(::testing::Throw(SocketException("test sendto error")));
+    EXPECT_NO_THROW(ss->execute_command());
 }
 
 TEST_F(SocketServerTest, socketserver_registerSubscriber)
@@ -183,5 +231,7 @@ TEST_F(SocketServerTest, socketserver_registerSubscriber)
                                                                                                      { return std::make_unique<MockSubscriber>(); }));
     EXPECT_CALL(*agent, requestSubcriber("StopTest", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                         { return std::make_unique<MockSubscriber>(); }));
-    ss->register_subscriber(*agent);
+    EXPECT_CALL(*agent, requestSubcriber("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                        { return std::make_unique<MockSubscriber>(); }));
+    EXPECT_NO_THROW(ss->register_subscriber(*agent));
 }

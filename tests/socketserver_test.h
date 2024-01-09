@@ -137,4 +137,14 @@ protected:
         std::getline(file, result);
         return result;
     }
+
+    void set_zed_status(int data)
+    {
+        ss->zed_status.store(data);
+    }
+
+    const std::string pack_infoData_caller()
+    {
+        return ss->pack_infoData();
+    }
 };
