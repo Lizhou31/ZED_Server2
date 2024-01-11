@@ -47,6 +47,7 @@ void SocketServer::waiting_command()
     {
         std::cerr << "Error occurred while receive" << e.what() << std::endl;
         result_file.close();
+        zed_setZero();
         throw std::runtime_error("Waiting command error.");
     }
 }
@@ -82,6 +83,8 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
 void SocketServer::stop_callback(const std::string &topic, const std::string &data)
 {
     result_file.close();
+    zed_setZero();
+
     // TODO: Stop the ZedServer.
 }
 void SocketServer::probe_callback(const std::string &topic, const std::string &data)
@@ -117,5 +120,8 @@ void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
 
 void SocketServer::shutdown()
 {
+    // TODO: Test
     result_file.close();
+    message.clear();
+    zed_setZero();
 }

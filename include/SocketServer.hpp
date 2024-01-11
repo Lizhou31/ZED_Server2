@@ -9,6 +9,8 @@
 class SocketServerTest;
 namespace mysocketserver
 {
+#define ZED_FACTOR 10000
+
     class SocketServer
     {
     public:
@@ -17,7 +19,10 @@ namespace mysocketserver
                      std::shared_ptr<simplepubsub::IPublisher> invoker_pub) : factory(std::move(_factory)),
                                                                               socket(nullptr),
                                                                               invoker(invoker_pub),
-                                                                              zed_status(0) {}
+                                                                              zed_status(0),
+                                                                              zed_x(0),
+                                                                              zed_y(0),
+                                                                              zed_z(0) {}
         void init(int port);
         void waiting_connection();        // blocking
         void waiting_command();           // blocking
@@ -48,16 +53,30 @@ namespace mysocketserver
         std::ofstream result_file;
         std::unique_ptr<simplepubsub::ISubscriber> topic_create, topic_stop, topic_probe, topic_getInfo;
         std::atomic<int> zed_status;
+        std::atomic<int> zed_x, zed_y, zed_z;
 
         // Packed the return data
         // TODO: Refactor to independent file
+        // return const?
         std::string pack_infoData()
         {
-            const std::string status_list[] = {"OK","Searching", "Saving", "Stop"};
+            const std::string status_list[] = {"OK", "Searching", "Saving", "Stop"};
             nlohmann::json info;
             info["Command"] = 6;
             info["Status"] = status_list[zed_status.load()];
+            info["X"] = float(zed_x.load() / ZED_FACTOR);
+            info["Y"] = float(zed_y.load() / ZED_FACTOR);
+            info["Z"] = float(zed_z.load() / ZED_FACTOR);
             return nlohmann::to_string(info);
+        }
+
+        // TODO: Test
+        void zed_setZero()
+        {
+            zed_status.store(0);
+            zed_x.store(0);
+            zed_y.store(0);
+            zed_z.store(0);
         }
     };
 }
