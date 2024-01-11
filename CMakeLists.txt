@@ -13,7 +13,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Coverage")
 
     # Link the coverage library
     link_libraries(gcov)
-else()
+elseif(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
