@@ -56,7 +56,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
       
     - name: Create Data Directory
-      run: mkdir ${{github.workspace}}/build/test/Data 
+      run: mkdir ${{github.workspace}}/build/tests/Data 
    
     - name: Test
       working-directory: ${{github.workspace}}/build
