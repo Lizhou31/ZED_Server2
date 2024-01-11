@@ -55,10 +55,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 # Add source files
 file(GLOB_RECURSE SOCKETSERVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/SocketServer/*.cpp)
 file(GLOB_RECURSE COMMANDSOLVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/CommandSolver/*.cpp)
+file(GLOB_RECURSE POSIONTRACKER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/PositionTracker/*.cpp)
 
 # Add the library
 add_library(SocketServer STATIC ${SOCKETSERVER_SRC_FILES})
 add_library(CommandSolver STATIC ${COMMANDSOLVER_SRC_FILES})
+add_library(PositionTracker STATIC ${POSIONTRACKER_SRC_FILES})
 
 
 # Add the executable
@@ -66,6 +68,7 @@ add_executable(${PROJECT_NAME}
     ${COMMANDSOLVER_SRC_FILES} 
     ${SOCKETSERVER_SRC_FILES} 
     ${SIMPLEPUBSUB_SRC_FILES}
+    ${POSIONTRACKER_SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp)
 
 if(DEPLOYMENT_ENV)
@@ -73,12 +76,14 @@ if(DEPLOYMENT_ENV)
                             PRIVATE
                             ${ZED_LIBS}
                             SocketServer
+                            PositionTracker
                             zmq
                             -lm)
 else()
     target_link_libraries(${PROJECT_NAME}
                             PRIVATE
                             SocketServer
+                            PositionTracker
                             zmq
                             -lm)
 endif()
@@ -89,6 +94,8 @@ target_link_libraries(CommandSolver
 target_link_libraries(SocketServer
                         PUBLIC
                         CommandSolver)
-
+target_link_libraries(PositionTracker
+                        PUBLIC
+                        nlohmann_json::nlohmann_json)                        
 enable_testing()
 add_subdirectory(tests)

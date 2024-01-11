@@ -42,17 +42,29 @@ target_link_libraries(
     zmq
 )
 
+add_executable(positiontracker_test ${CMAKE_CURRENT_SOURCE_DIR}/positiontracker_test.cc)
+target_link_libraries(
+    positiontracker_test
+    PRIVATE
+    GTest::gtest_main
+    GTest::gmock
+    zmq
+    PositionTracker
+)
+
 # Include the directory
 target_include_directories(websocket_test PRIVATE ../include/)
 target_include_directories(socketserver_test PRIVATE ../include/)
 target_include_directories(commandsolver_test PRIVATE ../include/)
 target_include_directories(simplepubsub_test PRIVATE ../include/)
+target_include_directories(positiontracker_test PRIVATE ../include/)
 
 # Add teh test to be run
 gtest_discover_tests(websocket_test)
 gtest_discover_tests(socketserver_test)
 gtest_discover_tests(commandsolver_test)
 gtest_discover_tests(simplepubsub_test)
+gtest_discover_tests(positiontracker_test)
 
 # Assuming your test JSON files are in "tests/test_data" directory
 set(TEST_DATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test_data")
