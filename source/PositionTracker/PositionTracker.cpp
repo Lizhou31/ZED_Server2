@@ -11,6 +11,8 @@ void PositionTracker::getData()
         positioner->getStatus(status);
         pub_ptr->publish("ZED_Status", packStatus());
     }
+    status = Positioner_Status::Stop;
+    pub_ptr->publish("ZED_Status", packStatus());
 }
 
 const std::string PositionTracker::packStatus()

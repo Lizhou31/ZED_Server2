@@ -19,7 +19,13 @@ class PositionTrackerTest;
 
 namespace positiontracker
 {
-    enum Positioner_Status {OK, Searching, Save, Stop};
+    enum Positioner_Status
+    {
+        OK,
+        Searching,
+        Save,
+        Stop
+    };
     class IPositioner
     {
     public:
@@ -32,13 +38,14 @@ namespace positiontracker
     {
     public:
         friend class ::PositionTrackerTest;
-        PositionTracker(simplepubsub::IAgent &agent, std::unique_ptr<IPositioner> _positioner)
+        PositionTracker(std::shared_ptr<simplepubsub::IPublisher> _pub_ptr, std::unique_ptr<IPositioner> _positioner)
             : keepRunning(true),
+              pub_ptr(_pub_ptr),
               positioner(std::move(_positioner))
         {
-            pub_ptr = agent.requestPublisher();
             positionerThread = std::thread(&PositionTracker::getData, this);
         };
+
         ~PositionTracker()
         {
             keepRunning = false;
@@ -50,7 +57,7 @@ namespace positiontracker
         const std::string packStatus();
         const std::string packPosition();
         std::atomic<bool> keepRunning;
-        std::unique_ptr<simplepubsub::IPublisher> pub_ptr;
+        std::shared_ptr<simplepubsub::IPublisher> pub_ptr;
         std::unique_ptr<IPositioner> positioner;
         std::thread positionerThread;
         struct position_xyz

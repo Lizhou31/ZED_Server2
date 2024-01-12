@@ -28,14 +28,6 @@ public:
     MOCK_METHOD(void, publish, (const std::string &topic, const std::string &data), (override));
 };
 
-class MockAgent : public simplepubsub::IAgent
-{
-public:
-    MOCK_METHOD(std::unique_ptr<simplepubsub::IPublisher>, requestPublisher, (), (override));
-    MOCK_METHOD(std::unique_ptr<simplepubsub::ISubscriber>, requestSubcriber,
-                (const std::string &topic, const std::function<void(const std::string &, const std::string &)> &callback), (override));
-};
-
 class PositionTrackerTest : public ::testing::Test
 {
 protected:
@@ -43,7 +35,6 @@ protected:
     ~PositionTrackerTest() override {}
     MockPublish *pub_ptr;
     std::unique_ptr<positiontracker::PositionTracker> positionTracker;
-    MockAgent agent;
     MockPositioner *positioner;
     std::atomic<int> status_ok, position_ok;
     void SetUp() override

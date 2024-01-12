@@ -128,7 +128,7 @@ TEST_F(SocketServerTest, socketsever_CreateFileSuccess)
     { ss->createFile_callback(topic, data); };
     auto createCMD = (testJson["CREATE"])[0].dump();
     setMessage(createCMD);
-    EXPECT_CALL(*raw_pub, publish("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
+    EXPECT_CALL(*raw_pub, publish(::testing::_, ::testing::_)).WillRepeatedly(::testing::Invoke(callback));
     EXPECT_NO_THROW(ss->execute_command());
     ASSERT_TRUE(fileExists(testFilePath));
 }
@@ -256,7 +256,7 @@ TEST_F(SocketServerTest, socketserver_zedPositionFailed)
 TEST_F(SocketServerTest, socketserver_registerSubscriber)
 {
     // TODO: Hasn't test the subscriber unique_ptr allocate properly.
-    
+
     EXPECT_CALL(*agent, requestSubcriber("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                           { return std::make_unique<MockSubscriber>(); }));
 

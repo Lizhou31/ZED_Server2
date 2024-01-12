@@ -47,6 +47,7 @@ void SocketServer::waiting_command()
     {
         std::cerr << "Error occurred while receive" << e.what() << std::endl;
         result_file.close();
+        pt.reset();
         zed_setZero();
         throw std::runtime_error("Waiting command error.");
     }
@@ -75,7 +76,11 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
     {
         throw std::runtime_error("Failed to open file: " + file_name);
     }
-    // TODO: Start the ZED server
+
+    // TODO: Refactor, and test
+#ifdef USE_DEPLOYMENT_ENV
+    pt = std::make_unique<positiontracker::PositionTracker>(positioner_pub, std::make_unique<zedpositioner::ZedPositioner>());
+#endif
 
     // TODO: CreateFile while the directory doesn't exist?
     // TODO: Refactor: might need to saperate the start and create file.
@@ -85,16 +90,16 @@ void SocketServer::stop_callback(const std::string &topic, const std::string &da
 {
     result_file.close();
     zed_setZero();
-
+    pt.reset();
     // TODO: Stop the ZedServer.
 }
 
 void SocketServer::probe_callback(const std::string &topic, const std::string &data)
 {
     result_file << data << ",";
-    result_file << zed_x.load() << ",";
-    result_file << zed_y.load() << ",";
-    result_file << zed_z.load() << std::endl;
+    result_file << float(zed_x.load()) / ZED_FACTOR << ",";
+    result_file << float(zed_y.load()) / ZED_FACTOR << ",";
+    result_file << float(zed_z.load()) / ZED_FACTOR << std::endl;
 }
 
 void SocketServer::getInfo_callback(const std::string &topic, const std::string &data)
@@ -144,5 +149,6 @@ void SocketServer::shutdown()
     // TODO: Test
     result_file.close();
     message.clear();
+    pt.reset();
     zed_setZero();
 }

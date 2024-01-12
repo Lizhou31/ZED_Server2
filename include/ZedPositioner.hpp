@@ -19,7 +19,7 @@ namespace zedpositioner
 {
 #define ZED_FACTOR 10000
 
-    class ZedPositioner : positiontracker::IPositioner
+    class ZedPositioner : public positiontracker::IPositioner
     {
     public:
         ZedPositioner() : status(positiontracker::Positioner_Status::Stop)
