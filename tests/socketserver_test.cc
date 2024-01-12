@@ -176,7 +176,7 @@ TEST_F(SocketServerTest, socketserver_ProbeSuccess)
 
 TEST_F(SocketServerTest, socketserver_packinfoData)
 {
-    set_zed_status(0);
+    set_zedStatus(0);
     const std::string result = pack_infoData_caller();
     auto returnResult = (testJson["RETURNINFO"])[0].dump();
     EXPECT_EQ(returnResult, result);
@@ -195,7 +195,7 @@ TEST_F(SocketServerTest, socketserver_getInfoSuccess)
     auto getInfoCMD = ((testJson["GETINFO"])[0]).dump();
     setMessage(getInfoCMD);
     EXPECT_CALL(*raw_pub, publish("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
-    set_zed_status(0);
+    set_zedStatus(0);
     std::string result = pack_infoData_caller();
 
     EXPECT_CALL(getFactory()->mocksocket, m_sendto(result)).Times(1);
@@ -215,11 +215,42 @@ TEST_F(SocketServerTest, socketserver_getInfoFailed)
     auto getInfoCMD = ((testJson["GETINFO"])[0]).dump();
     setMessage(getInfoCMD);
     EXPECT_CALL(*raw_pub, publish("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke(callback));
-    set_zed_status(0);
+    set_zedStatus(0);
     std::string result = pack_infoData_caller();
 
     EXPECT_CALL(getFactory()->mocksocket, m_sendto(result)).Times(1).WillOnce(::testing::Throw(SocketException("test sendto error")));
     EXPECT_NO_THROW(ss->execute_command());
+}
+
+TEST_F(SocketServerTest, socketserver_zedStatusSuccess)
+{
+    nlohmann::json status;
+    status["Status"] = 1;
+    EXPECT_NO_THROW(ss->zedStatus_callback("ZED_Status", nlohmann::to_string(status)));
+    EXPECT_EQ(1, get_zedStatus());
+}
+
+TEST_F(SocketServerTest, socketserver_zedStatusFailed)
+{
+    // TODO: TestFaied
+}
+
+TEST_F(SocketServerTest, socketserver_zedPositionSuccess)
+{
+    nlohmann::json position;
+    position["X"] = 1;
+    position["Y"] = 2;
+    position["Z"] = 3;
+    EXPECT_NO_THROW(ss->zedPosition_callback("ZED_Position", nlohmann::to_string(position)));
+
+    EXPECT_EQ(1, get_zedX());
+    EXPECT_EQ(2, get_zedY());
+    EXPECT_EQ(3, get_zedZ());
+}
+
+TEST_F(SocketServerTest, socketserver_zedPositionFailed)
+{
+    // TODO: TestFailed
 }
 
 TEST_F(SocketServerTest, socketserver_registerSubscriber)
@@ -227,11 +258,21 @@ TEST_F(SocketServerTest, socketserver_registerSubscriber)
 
     EXPECT_CALL(*agent, requestSubcriber("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                           { return std::make_unique<MockSubscriber>(); }));
+
     EXPECT_CALL(*agent, requestSubcriber("Probe", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                      { return std::make_unique<MockSubscriber>(); }));
+
     EXPECT_CALL(*agent, requestSubcriber("StopTest", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                         { return std::make_unique<MockSubscriber>(); }));
+
     EXPECT_CALL(*agent, requestSubcriber("GetInfo", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
-                                                                                                        { return std::make_unique<MockSubscriber>(); }));
+                                                                                                       { return std::make_unique<MockSubscriber>(); }));
+
+    EXPECT_CALL(*agent, requestSubcriber("ZED_Status", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                          { return std::make_unique<MockSubscriber>(); }));
+                                                                                                          
+    EXPECT_CALL(*agent, requestSubcriber("ZED_Position", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
+                                                                                                            { return std::make_unique<MockSubscriber>(); }));
+
     EXPECT_NO_THROW(ss->register_subscriber(*agent));
 }

@@ -26,7 +26,6 @@ namespace mysocketserver
         void init(int port);
         void waiting_connection();        // blocking
         void waiting_command();           // blocking
-        void sending_data(std::string &); // blocking
         void execute_command();           // non-blocking
 
         /* Subscriber Method */
@@ -34,6 +33,8 @@ namespace mysocketserver
         void stop_callback(const std::string &topic, const std::string &data);
         void probe_callback(const std::string &topic, const std::string &data);
         void getInfo_callback(const std::string &topic, const std::string &data);
+        void zedStatus_callback(const std::string &topic, const std::string &data);
+        void zedPosition_callback(const std::string &topic, const std::string &data);
 
         void register_subscriber(simplepubsub::IAgent &agent); // TODO: might refctor.
 

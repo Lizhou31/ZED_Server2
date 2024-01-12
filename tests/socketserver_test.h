@@ -138,9 +138,29 @@ protected:
         return result;
     }
 
-    void set_zed_status(int data)
+    void set_zedStatus(int data)
     {
         ss->zed_status.store(data);
+    }
+
+    int get_zedStatus()
+    {
+        return ss->zed_status.load();
+    }
+
+    int get_zedX()
+    {
+        return ss->zed_x.load();
+    }
+
+    int get_zedY()
+    {
+        return ss->zed_y.load();
+    }
+
+    int get_zedZ()
+    {
+        return ss->zed_z.load();
     }
 
     const std::string pack_infoData_caller()

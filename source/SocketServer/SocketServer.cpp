@@ -76,6 +76,7 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
         throw std::runtime_error("Failed to open file: " + file_name);
     }
     // TODO: Start the ZED server
+
     // TODO: CreateFile while the directory doesn't exist?
     // TODO: Refactor: might need to saperate the start and create file.
 }
@@ -106,6 +107,19 @@ void SocketServer::getInfo_callback(const std::string &topic, const std::string 
     }
 }
 
+void SocketServer::zedStatus_callback(const std::string &topic, const std::string &data)
+{
+    nlohmann::json status = nlohmann::json::parse(data);
+    zed_status.store(status["Status"].get<int>());
+}
+void SocketServer::zedPosition_callback(const std::string &topic, const std::string &data)
+{
+    nlohmann::json position = nlohmann::json::parse(data);
+    zed_x.store(position["X"].get<int>());
+    zed_y.store(position["Y"].get<int>());
+    zed_z.store(position["Z"].get<int>());
+}
+
 void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
 {
     topic_create = agent.requestSubcriber("CreateFile", [this](const std::string &topic, const std::string &data)
@@ -116,6 +130,10 @@ void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
                                         { stop_callback(topic, data); });
     topic_getInfo = agent.requestSubcriber("GetInfo", [this](const std::string &topic, const std::string &data)
                                            { getInfo_callback(topic, data); });
+    topic_getInfo = agent.requestSubcriber("ZED_Status", [this](const std::string &topic, const std::string &data)
+                                           { zedStatus_callback(topic, data); });
+    topic_getInfo = agent.requestSubcriber("ZED_Position", [this](const std::string &topic, const std::string &data)
+                                           { zedPosition_callback(topic, data); });
 }
 
 void SocketServer::shutdown()
