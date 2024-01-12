@@ -171,7 +171,7 @@ TEST_F(SocketServerTest, socketserver_ProbeSuccess)
     EXPECT_CALL(*raw_pub, publish("Probe", "123")).Times(1).WillOnce(::testing::Invoke(callback));
     EXPECT_NO_THROW(ss->execute_command());
 
-    EXPECT_EQ("123", getFileResult());
+    EXPECT_EQ("123,0,0,0", getFileResult());
 }
 
 TEST_F(SocketServerTest, socketserver_packinfoData)
@@ -255,7 +255,8 @@ TEST_F(SocketServerTest, socketserver_zedPositionFailed)
 
 TEST_F(SocketServerTest, socketserver_registerSubscriber)
 {
-
+    // TODO: Hasn't test the subscriber unique_ptr allocate properly.
+    
     EXPECT_CALL(*agent, requestSubcriber("CreateFile", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                           { return std::make_unique<MockSubscriber>(); }));
 
@@ -270,7 +271,7 @@ TEST_F(SocketServerTest, socketserver_registerSubscriber)
 
     EXPECT_CALL(*agent, requestSubcriber("ZED_Status", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                           { return std::make_unique<MockSubscriber>(); }));
-                                                                                                          
+
     EXPECT_CALL(*agent, requestSubcriber("ZED_Position", ::testing::_)).Times(1).WillOnce(::testing::Invoke([this](const std::string &arg1, std::function<void(const std::string &, const std::string &)> arg2) -> std::unique_ptr<simplepubsub::ISubscriber>
                                                                                                             { return std::make_unique<MockSubscriber>(); }));
 

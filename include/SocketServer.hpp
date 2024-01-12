@@ -52,7 +52,7 @@ namespace mysocketserver
         std::string message;
         commandsolver::CommandInvoker invoker;
         std::ofstream result_file;
-        std::unique_ptr<simplepubsub::ISubscriber> topic_create, topic_stop, topic_probe, topic_getInfo;
+        std::unique_ptr<simplepubsub::ISubscriber> topic_create, topic_stop, topic_probe, topic_getInfo, topic_status, topic_position;
         std::atomic<int> zed_status;
         std::atomic<int> zed_x, zed_y, zed_z;
 

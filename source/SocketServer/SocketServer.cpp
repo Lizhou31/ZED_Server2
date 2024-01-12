@@ -88,10 +88,13 @@ void SocketServer::stop_callback(const std::string &topic, const std::string &da
 
     // TODO: Stop the ZedServer.
 }
+
 void SocketServer::probe_callback(const std::string &topic, const std::string &data)
 {
-    result_file << data << std::endl;
-    // TODO: save the location data
+    result_file << data << ",";
+    result_file << zed_x.load() << ",";
+    result_file << zed_y.load() << ",";
+    result_file << zed_z.load() << std::endl;
 }
 
 void SocketServer::getInfo_callback(const std::string &topic, const std::string &data)
@@ -130,9 +133,9 @@ void SocketServer::register_subscriber(simplepubsub::IAgent &agent)
                                         { stop_callback(topic, data); });
     topic_getInfo = agent.requestSubcriber("GetInfo", [this](const std::string &topic, const std::string &data)
                                            { getInfo_callback(topic, data); });
-    topic_getInfo = agent.requestSubcriber("ZED_Status", [this](const std::string &topic, const std::string &data)
+    topic_status = agent.requestSubcriber("ZED_Status", [this](const std::string &topic, const std::string &data)
                                            { zedStatus_callback(topic, data); });
-    topic_getInfo = agent.requestSubcriber("ZED_Position", [this](const std::string &topic, const std::string &data)
+    topic_position = agent.requestSubcriber("ZED_Position", [this](const std::string &topic, const std::string &data)
                                            { zedPosition_callback(topic, data); });
 }
 
