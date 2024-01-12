@@ -27,14 +27,15 @@ add_custom_target(coverage
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}                                                           # Working directory
 )
 
-option(DEPLOYMENT_ENV "Build configuration for deployment" OFF)
+option(USE_DEPLOYMENT_ENV "Build configuration for deployment" OFF)
 
 # include modules
 add_subdirectory(module)
 
 
-if(DEPLOYMENT_ENV)
+if(USE_DEPLOYMENT_ENV)
     # ZED Configuration
+    add_compile_options(-D USE_DEPLOYMENT_ENV)
     option(LINK_SHARED_ZED "Link with the ZED SDK shared executable" ON)
     find_package(ZED 3 REQUIRED)
     find_package(CUDA ${ZED_CUDA_VERSION} REQUIRED)
@@ -55,7 +56,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 # Add source files
 file(GLOB_RECURSE SOCKETSERVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/SocketServer/*.cpp)
 file(GLOB_RECURSE COMMANDSOLVER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/CommandSolver/*.cpp)
-file(GLOB_RECURSE POSIONTRACKER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/PositionTracker/*.cpp)
+
+if(USE_DEPLOYMENT_ENV)
+    file(GLOB_RECURSE POSIONTRACKER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/PositionTracker/*.cpp)
+else()
+    set(POSIONTRACKER_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/PositionTracker/PositionTracker.cpp)
+endif()
 
 # Add the library
 add_library(SocketServer STATIC ${SOCKETSERVER_SRC_FILES})
@@ -71,31 +77,32 @@ add_executable(${PROJECT_NAME}
     ${POSIONTRACKER_SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp)
 
-if(DEPLOYMENT_ENV)
-    target_link_libraries(${PROJECT_NAME}
-                            PRIVATE
-                            ${ZED_LIBS}
-                            SocketServer
-                            PositionTracker
-                            zmq
-                            -lm)
-else()
-    target_link_libraries(${PROJECT_NAME}
-                            PRIVATE
-                            SocketServer
-                            PositionTracker
-                            zmq
-                            -lm)
-endif()
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    SocketServer
+    PositionTracker
+    zmq
+    -lm
+    -lpthread)
 
 target_link_libraries(CommandSolver
                         PUBLIC
                         nlohmann_json::nlohmann_json)
 target_link_libraries(SocketServer
                         PUBLIC
-                        CommandSolver)
-target_link_libraries(PositionTracker
-                        PUBLIC
-                        nlohmann_json::nlohmann_json)                        
+                        CommandSolver
+                        PositionTracker)
+
+if(USE_DEPLOYMENT_ENV)
+    target_link_libraries(PositionTracker
+                            PUBLIC
+                            nlohmann_json::nlohmann_json
+                            ${ZED_LIBS})       
+else()
+    target_link_libraries(PositionTracker
+                            PUBLIC
+                            nlohmann_json::nlohmann_json)                             
+endif()
+                 
 enable_testing()
 add_subdirectory(tests)

@@ -19,6 +19,7 @@ class PositionTrackerTest;
 
 namespace positiontracker
 {
+    enum Positioner_Status {OK, Searching, Save, Stop};
     class IPositioner
     {
     public:

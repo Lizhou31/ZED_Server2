@@ -6,10 +6,10 @@ void PositionTracker::getData()
 {
     while (keepRunning)
     {
-        positioner->getStatus(status);
-        pub_ptr->publish("ZED_Status", packStatus());
         positioner->getPosition(position.x, position.y, position.z);
         pub_ptr->publish("ZED_Position", packPosition());
+        positioner->getStatus(status);
+        pub_ptr->publish("ZED_Status", packStatus());
     }
 }
 

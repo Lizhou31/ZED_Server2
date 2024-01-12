@@ -5,12 +5,12 @@
 #include "Socket.hpp"
 #include <atomic>
 #include "CommandSolver.hpp"
+#include "PositionTracker.hpp"
+#include "ZedPositioner.hpp"
 
 class SocketServerTest;
 namespace mysocketserver
 {
-#define ZED_FACTOR 10000
-
     class SocketServer
     {
     public:
@@ -19,7 +19,7 @@ namespace mysocketserver
                      std::shared_ptr<simplepubsub::IPublisher> invoker_pub) : factory(std::move(_factory)),
                                                                               socket(nullptr),
                                                                               invoker(invoker_pub),
-                                                                              zed_status(0),
+                                                                              zed_status(positiontracker::Positioner_Status::Stop),
                                                                               zed_x(0),
                                                                               zed_y(0),
                                                                               zed_z(0) {}
@@ -74,7 +74,7 @@ namespace mysocketserver
         // TODO: Test
         void zed_setZero()
         {
-            zed_status.store(0);
+            zed_status.store(positiontracker::Positioner_Status::Stop);
             zed_x.store(0);
             zed_y.store(0);
             zed_z.store(0);
