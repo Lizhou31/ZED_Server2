@@ -1,3 +1,14 @@
+/**
+ * @file websocket_test.h
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief Websocket test header
+ * @version 0.1
+ * @date 2024-01-15
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #ifndef WEBSOCKET_TEST_H
 #define WEBSOCKET_TEST_H
 
@@ -5,6 +16,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+/**
+ * @brief The system socket mock
+ */
 class MockSystemSocket : public ISystemSocket
 {
 public:
@@ -16,33 +30,69 @@ public:
     MOCK_METHOD(int, Cclose, (int), (override));
 };
 
+/**
+ * @brief WebSocket test class
+ */
 class WebSocketTest : public ::testing::Test
 {
 protected:
-    MockSystemSocket mockSys;
-    std::unique_ptr<myWebSocket::WebSocket> ws;
+    /**
+     * @brief Construct a new Web Socket Test object
+     */
     WebSocketTest() {}
-    ~WebSocketTest() override
-    {
-    }
+
+    /**
+     * @brief Destroy the Web Socket Test object
+     */
+    ~WebSocketTest() override {}
+
+    /**
+     * @brief Set the Up object
+     */
     void SetUp() override
     {
         ws = std::make_unique<myWebSocket::WebSocket>(&mockSys, 8888);
     }
 
+    /**
+     * @brief TearDown the test
+     * 
+     */
     void TearDown() override
     {
     }
 
+    /**
+     * @brief Get client file descriptor
+     * 
+     * @return int 
+     */
     int getclientfd()
     {
         return ws->_client_fd;
     }
 
+    /**
+     * @brief Get the buffer p object
+     * 
+     * @return char* 
+     */
     char *getbuffer_p()
     {
         return ws->_buf;
     }
+
+    /**
+     * @brief System socket mock
+     * 
+     */
+    MockSystemSocket mockSys;
+
+    /**
+     * @brief Websocket unique pointer
+     * 
+     */
+    std::unique_ptr<myWebSocket::WebSocket> ws;
 };
 
 #endif /* WEBSOCKET_TEST_H */
