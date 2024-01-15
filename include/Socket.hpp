@@ -1,3 +1,13 @@
+/**
+ * @file Socket.hpp
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief Socket header file
+ * @version 0.1
+ * @date 2024-01-15
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef SOCKET_H
 #define SOCKET_H
 
@@ -8,7 +18,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// Socket interface
+/**
+ * @class Socket
+ * 
+ * @brief Socket Interface
+ */
 class Socket
 {
 public:
@@ -21,6 +35,11 @@ public:
     virtual ~Socket() {}
 };
 
+/**
+ * @class ServerSocket
+ * 
+ * @brief Server Socket Interface
+ */
 class ISystemSocket
 {
 public:
@@ -36,7 +55,11 @@ public:
     virtual int Cclose(int sockfd) = 0;
 };
 
-// Abstraction factory interface
+/**
+ * @class ServerSocketFactory
+ * 
+ * @brief Abstract Server Socket Factory
+ */
 class SocketFactory
 {
 public:
@@ -44,7 +67,11 @@ public:
     virtual ~SocketFactory() {}
 };
 
-// Exception
+/**
+ * @class SocketException
+ * 
+ * @brief SocketException
+ */
 class SocketException : public std::runtime_error
 {
 public:

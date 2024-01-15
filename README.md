@@ -100,12 +100,12 @@ ZED_Server2/
 
 - [ ] Add all the comments in doxygen style.
     - [X] WebSocket
-    - [ ] Socket
+    - [X] Socket
     - [ ] SocketServer
     - [X] ZedPositioner
     - [X] CommandSolver
     - [X] PositionTracker
-    - [ ] SimplePubSub
+    - [X] SimplePubSub
 - [ ] Improve the detailed comment.
 
 ## Code Coverage Report

@@ -1,5 +1,18 @@
+/**
+ * @file simplepubsub_test.cc
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief simplepubsub test
+ * @version 0.1
+ * @date 2024-01-15
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "simplepubsub_test.h"
 
+/**
+ * @brief Construct a new test test_publish_subscribe object
+ */
 TEST_F(SimplePubSubTest, test_publish_subscribe)
 {
     zmq::context_t ctx;
@@ -15,6 +28,9 @@ TEST_F(SimplePubSubTest, test_publish_subscribe)
         ;
 }
 
+/**
+ * @brief Construct a new test test_agent_publish_subcribe object
+ */
 TEST_F(SimplePubSubTest, test_agent_publish_subcribe)
 {
     simplepubsub::Agent agent;
