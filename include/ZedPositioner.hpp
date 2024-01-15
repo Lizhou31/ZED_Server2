@@ -1,7 +1,7 @@
 /**
  * @file ZedPositioner.hpp
- * @author your name (you@domain.com)
- * @brief
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief ZedPositioner header file
  * @version 0.1
  * @date 2024-01-12
  *
@@ -17,11 +17,22 @@
 
 namespace zedpositioner
 {
-#define ZED_FACTOR 10000
+#define ZED_FACTOR 10000    // ZED position factor
 
+    /**
+     * @brief ZedPositioner class
+     * 
+     * @details This class is used to get position from ZED camera with ZED SDK
+     */
     class ZedPositioner : public positiontracker::IPositioner
     {
     public:
+
+        /**
+         * @brief Construct a new Zed Positioner object
+         * 
+         * @details This constructor is used to initialize ZED camera and enable position tracking
+         */
         ZedPositioner() : status(positiontracker::Positioner_Status::Stop)
         {
             sl::InitParameters init_params;
@@ -44,17 +55,49 @@ namespace zedpositioner
                 throw std::system_error(EBUSY, std::generic_category(), "Position tracking enable error");
             }
         }
+
+        /**
+         * @brief Destroy the Zed Positioner object
+         * 
+         * @details This destructor is used to disable position tracking and close ZED camera
+         */
         ~ZedPositioner()
         {
             zed.disablePositionalTracking();
             zed.close();
         }
-        void getStatus(int &) override;
-        void getPosition(int &, int &, int &) override;
+
+        /**
+         * @brief Get the Status object
+         * 
+         * @param _status status of positioner
+         */
+        void getStatus(int &_status) override;
+
+        /**
+         * @brief Get the Position object
+         * 
+         * @param _x x position
+         * @param _y y position
+         * @param _z z position
+         */
+        void getPosition(int &_x, int &_y, int &_z) override;
 
     private:
+
+        /**
+         * @brief ZED camera object
+         */
         sl::Camera zed;
+
+        /**
+         * @brief ZED camera pose object
+         */
         sl::Pose zed_pose;
+
+        /**
+         * @brief Positioner status
+         */
         std::atomic<int> status;
     };
 }

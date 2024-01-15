@@ -14,11 +14,27 @@
 #include "ZedPositioner.hpp"
 using namespace zedpositioner;
 
+/**
+ * @brief Get the status from ZedPositioner
+ * 
+ * @details This function is used to get the atomic status from the getPosition function updated.
+ * 
+ * @param _status reference to status return
+ */
 void ZedPositioner::getStatus(int &_status)
 {
     _status = status.load();
 }
 
+/**
+ * @brief Get the Position from ZedPositioner
+ * 
+ * @details This function is used to get the position and status from ZED camera with ZED SDK
+ * 
+ * @param _x reference to x return
+ * @param _y reference to y return
+ * @param _z reference to z return
+ */
 void ZedPositioner::getPosition(int &_x, int &_y, int &_z)
 {
     if (zed.grab() == sl::ERROR_CODE::SUCCESS)

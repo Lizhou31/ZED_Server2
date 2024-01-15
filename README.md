@@ -102,10 +102,11 @@ ZED_Server2/
     - [X] WebSocket
     - [ ] Socket
     - [ ] SocketServer
-    - [ ] ZedPositioner
+    - [X] ZedPositioner
     - [X] CommandSolver
     - [X] PositionTracker
     - [ ] SimplePubSub
+- [ ] Improve the detailed comment.
 
 ## Code Coverage Report
 
