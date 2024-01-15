@@ -1,7 +1,7 @@
 /**
  * @file positiontracker_test.h
- * @author your name (you@domain.com)
- * @brief
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief positiontracker test header
  * @version 0.1
  * @date 2024-01-10
  *
