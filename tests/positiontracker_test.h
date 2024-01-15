@@ -15,6 +15,9 @@
 #include <gmock/gmock.h>
 #include <PositionTracker.hpp>
 
+/**
+ * @brief MockPositioner class for testing
+ */
 class MockPositioner : public positiontracker::IPositioner
 {
 public:
@@ -22,21 +25,34 @@ public:
     MOCK_METHOD(void, getPosition, (int &, int &, int &), (override));
 };
 
+/**
+ * @brief MockPublish class for testing
+ */
 class MockPublish : public simplepubsub::IPublisher
 {
 public:
     MOCK_METHOD(void, publish, (const std::string &topic, const std::string &data), (override));
 };
 
+/**
+ * @brief PositionTrackerTest class for testing
+ */
 class PositionTrackerTest : public ::testing::Test
 {
 protected:
+    /**
+     * @brief Construct a new Position Tracker Test object
+     */
     PositionTrackerTest() {}
+
+    /**
+     * @brief Destroy the Position Tracker Test object
+     */
     ~PositionTrackerTest() override {}
-    MockPublish *pub_ptr;
-    std::unique_ptr<positiontracker::PositionTracker> positionTracker;
-    MockPositioner *positioner;
-    std::atomic<int> status_ok, position_ok;
+
+    /**
+     * @brief Set up the Position Tracker Test object
+     */
     void SetUp() override
     {
         pub_ptr = new MockPublish();
@@ -45,24 +61,78 @@ protected:
         position_ok = 0;
     }
 
+    /**
+     * @brief Tear down the Position Tracker Test object
+     */
     void TearDown() override
     {
         positionTracker.reset();
     }
 
-    int get_status(){
+    /**
+     * @brief Get the status object
+     * 
+     * @return int status
+     */
+    int get_status()
+    {
         return positionTracker->status;
     }
 
-    int get_positionX(){
+    /**
+     * @brief Get the positionX object
+     * 
+     * @return int positionX
+     */
+    int get_positionX()
+    {
         return positionTracker->position.x;
     }
-    int get_positionY(){
+
+    /**
+     * @brief Get the positionY object
+     * 
+     * @return int positionY
+     */
+    int get_positionY()
+    {
         return positionTracker->position.y;
     }
-    int get_positionZ(){
+
+    /**
+     * @brief Get the positionZ object
+     * 
+     * @return int positionZ
+     */
+    int get_positionZ()
+    {
         return positionTracker->position.z;
     }
+
+    /**
+     * @brief MockPublish smart pointer
+     */
+    MockPublish *pub_ptr;
+
+    /**
+     * @brief MockPositioner smart pointer
+     */
+    std::unique_ptr<positiontracker::PositionTracker> positionTracker;
+
+    /**
+     * @brief MockPositioner raw pointer
+     */
+    MockPositioner *positioner;
+
+    /**
+     * @brief status_ok atomic variable
+     */
+    std::atomic<int> status_ok;
+
+    /**
+     * @brief position_ok atomic variable
+     */
+    std::atomic<int> position_ok;
 };
 
 #endif /* __POSITIONTRACKER_TEST_H */

@@ -104,7 +104,7 @@ ZED_Server2/
     - [ ] SocketServer
     - [ ] ZedPositioner
     - [X] CommandSolver
-    - [ ] PositionTracker
+    - [X] PositionTracker
     - [ ] SimplePubSub
 
 ## Code Coverage Report

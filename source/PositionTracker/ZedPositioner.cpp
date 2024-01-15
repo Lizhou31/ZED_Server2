@@ -1,7 +1,8 @@
 /**
  * @file ZedPositioner.cpp
- * @author your name (you@domain.com)
- * @brief
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief ZedPositioner source file
+ * @details This file implements the ZedPositioner class with ZED SDK
  * @version 0.1
  * @date 2024-01-12
  *
