@@ -65,6 +65,12 @@ make -j4 && ctest
 make coverage
 ```
 
+### Build the doxygen
+
+```bash
+mkdir doxygen && doxygen zedserver2
+```
+
 ## File Tree
 
 Below is the file tree structure of the ZED_Server2 project, outlining the main components:
@@ -97,7 +103,7 @@ ZED_Server2/
     - [ ] Socket
     - [ ] SocketServer
     - [ ] ZedPositioner
-    - [ ] CommandSolver
+    - [X] CommandSolver
     - [ ] PositionTracker
     - [ ] SimplePubSub
 

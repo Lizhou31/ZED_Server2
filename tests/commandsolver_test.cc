@@ -1,5 +1,18 @@
+/**
+ * @file commandsolver_test.cc
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief commandsolver test source file
+ * @version 0.1
+ * @date 2024-01-15
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include "commandsolver_test.h"
 
+/**
+ * @brief CreateCommandSuccessDecode test
+ */
 TEST_F(CommandSolverTest, CreateCommandSuccessDecode)
 {
     auto command = testJson["CREATE"];
@@ -13,6 +26,9 @@ TEST_F(CommandSolverTest, CreateCommandSuccessDecode)
     EXPECT_EQ("15", getcreateFileDdata(ptr).height);
 }
 
+/**
+ * @brief ProbeCommandSuccessDecode test
+ */
 TEST_F(CommandSolverTest, CreateCommandFailedLackArgs)
 {
     auto command = testJson["CREATE"];
@@ -31,6 +47,9 @@ TEST_F(CommandSolverTest, CreateCommandFailedLackArgs)
                  std::exception);
 }
 
+/**
+ * @brief ProbeCommandSuccessDecode test
+ */
 TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
 {
     auto command = testJson["CREATE"];
@@ -47,6 +66,9 @@ TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
     invoker->executeCommand(successCommand.dump());
 }
 
+/**
+ * @brief ProbeCommandSuccessDecode test
+ */
 TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
 {
     auto command = testJson["PROBE"];
@@ -59,6 +81,9 @@ TEST_F(CommandSolverTest, ProbeCommandExecuteSuccess)
     invoker->executeCommand(successCommand.dump());
 }
 
+/**
+ * @brief StopCommandExecuteSuccess test
+ */
 TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
 {
     auto command = testJson["STOP"];
@@ -70,6 +95,9 @@ TEST_F(CommandSolverTest, StopCommandExecuteSuccess)
     invoker->executeCommand(successCommand.dump());
 }
 
+/**
+ * @brief GetInfoCommandExecuteSuccess test
+ */
 TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
 {
     auto command = testJson["GETINFO"];
@@ -81,6 +109,9 @@ TEST_F(CommandSolverTest, GetInfoCommandExecuteSuccess)
     invoker->executeCommand(successCommand.dump());
 }
 
+/**
+ * @brief CommandExecuteFailed test
+ */
 TEST_F(CommandSolverTest, CommandExecuteFailed)
 {
     EXPECT_THROW({

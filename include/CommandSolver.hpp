@@ -1,3 +1,13 @@
+/**
+ * @file CommandSolver.hpp
+ * @author Lizhou31 (lisie31s@gmail.com)
+ * @brief  CommandSolver class declaration
+ * @version 0.1
+ * @date 2024-01-15
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef COMMANDSOLVER_H
 #define COMMANDSOLVER_H
 
@@ -10,63 +20,162 @@ class CommandSolverTest;
 
 namespace commandsolver
 {
+    /**
+     * @class ICommand
+     * 
+     * @brief Interface for Command
+     */
     class ICommand
     {
     public:
+
+        /**
+         * @brief Destroy the ICommand object
+         */
         virtual ~ICommand() {}
+
+        /**
+         * @brief Execute the command
+         * 
+         * @param ptr publisher smart pointer
+         */
         virtual void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) = 0;
     };
 
+    /**
+     * @class CreateCommand
+     * 
+     * @brief Create command class declaration
+     */
     class CreateCommand : public ICommand
     {
         friend class ::CommandSolverTest;
 
     public:
+
+        /**
+         * @brief Construct a new CreateCommand object
+         * 
+         * @param _id       file name
+         * @param _redius   file redius
+         * @param _height   file height
+         */
         CreateCommand(std::string _id, std::string _redius, std::string _height)
         {
             data.id = _id;
             data.redius = _redius;
             data.height = _height;
         };
+
+        /**
+         * @brief Destroy the CreateCommand object
+         */
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
 
     private:
+
+        /**
+         * @struct createFileData
+         * 
+         * @brief Create file data structure
+         */
         struct createFileData
         {
             std::string id;
             std::string redius;
             std::string height;
         };
+
+        /**
+         * @brief Create file data
+         */
         struct createFileData data;
     };
 
+    /**
+     * @class ProbeCommand
+     * 
+     * @brief Probe command class declaration
+     */
     class ProbeCommand : public ICommand
     {
     public:
+        /**
+         * @brief Construct a new ProbeCommand object
+         * 
+         * @param _sensor_data sensor data from probe
+         */
         ProbeCommand(std::string _sensor_data): sensor_data(_sensor_data){};
+
+        /**
+         * @brief Destroy the ProbeCommand object
+         */
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
 
     private:
+        /**
+         * @brief sensor data from probe
+         */
         std::string sensor_data;
     };
 
+    /**
+     * @class StopCommand
+     * 
+     * @brief Stop command class declaration
+     */
     class StopCommand : public ICommand
     {
     public:
+
+        /**
+         * @brief Construct a new StopCommand object
+         */
         StopCommand(){};
+        
+        /**
+         * @brief Destroy the StopCommand object
+         */
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
     };
 
+    /**
+     * @class GetInfoCommand
+     * 
+     * @brief GetInfo command class declaration
+     */
     class GetInfoCommand : public ICommand
     {
     public:
+        /**
+         * @brief Construct a new GetInfoCommand object
+         */
         GetInfoCommand(){};
+
+        /**
+         * @brief Destroy the GetInfoCommand object
+         */
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
     };
 
+    /**
+     * @class CommandFactory
+     * 
+     * @brief Command factory class declaration
+     * 
+     * @details This class is used to create the command
+     * 
+     * @todo Add more command type: RESET, CHANGE
+     */
     class CommandFactory
     {
     public:
+        /**
+         * @brief Create a Command object
+         * 
+         * @param commandJson command json
+         * @return std::unique_ptr<ICommand> 
+         */
         static std::unique_ptr<ICommand> createCommand(const nlohmann::json &commandJson)
         {
             auto commandType = commandJson["Command"].get<int>();
@@ -127,10 +236,28 @@ namespace commandsolver
         }
     };
 
+    /**
+     * @class CommandInvoker
+     * 
+     * @brief Command invoker class declaration
+     * 
+     * @details This class is used to execute the command
+     */
     class CommandInvoker
     {
     public:
+        /**
+         * @brief Construct a new Command Invoker object
+         * 
+         * @param ptr publisher smart pointer
+         */
         CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr) : _publisher_ptr(ptr) {}
+
+        /**
+         * @brief Execute the command
+         * 
+         * @param rawCommand raw command string
+         */
         void executeCommand(const std::string &rawCommand)
         {
             std::unique_ptr<ICommand> command;
@@ -147,12 +274,18 @@ namespace commandsolver
             command->execute(_publisher_ptr);
         }
 
+        /**
+         * @brief Destroy the Command Invoker object
+         */
         ~CommandInvoker()
         {
             _publisher_ptr.reset();
         }
 
     private:
+        /**
+         * @brief publisher smart pointer
+         */
         std::shared_ptr<simplepubsub::IPublisher> _publisher_ptr;
     };
 
