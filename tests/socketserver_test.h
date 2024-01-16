@@ -1,3 +1,13 @@
+/**
+ * @file socketserver_test.h
+ * @author Lizhou (lisie31s@gmail.com)
+ * @brief socket server test header
+ * @version 0.1
+ * @date 2024-01-16
+ * 
+ * @copyright Copyright (c) 2024
+ */
+
 #include "SocketServer.hpp"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>

@@ -14,23 +14,25 @@ ZED_Server2 depend on [ZeroMQ](https://zeromq.org/), an open-source universal me
 The Library install steps:
 
 * Install ZeroMQ (libzmq)
-    ```bash
-    git clone https://github.com/zeromq/libzmq.git
-    cd libzmq
-    mkdir build
-    cd build
-    cmake ..
-    sudo make -j4 install
-    ```
+ ```bash
+git clone https://github.com/zeromq/libzmq.git
+cd libzmq
+mkdir build
+cd build
+cmake ..
+sudo make -j4 install
+```
+
 * Install cppzmq:
-    ```bash
-    git clone https://github.com/zeromq/cppzmq.git
-    cd cppzmq
-    mkdir build
-    cd build
-    cmake ..
-    sudo make -j4 install
-    ```
+```bash
+git clone https://github.com/zeromq/cppzmq.git
+cd cppzmq
+mkdir build
+cd build
+cmake ..
+sudo make -j4 install
+```
+
 ### Test Dependency
 * Install gmock:
     ```bash
@@ -98,10 +100,10 @@ ZED_Server2/
 
 ## To-Do List
 
-- [ ] Add all the comments in doxygen style.
+- [X] Add all the comments in doxygen style.
     - [X] WebSocket
     - [X] Socket
-    - [ ] SocketServer
+    - [X] SocketServer
     - [X] ZedPositioner
     - [X] CommandSolver
     - [X] PositionTracker
