@@ -4,9 +4,9 @@
  * @brief  CommandSolver class declaration
  * @version 0.1
  * @date 2024-01-15
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 #ifndef COMMANDSOLVER_H
 #define COMMANDSOLVER_H
@@ -22,13 +22,12 @@ namespace commandsolver
 {
     /**
      * @class ICommand
-     * 
+     *
      * @brief Interface for Command
      */
     class ICommand
     {
     public:
-
         /**
          * @brief Destroy the ICommand object
          */
@@ -36,7 +35,7 @@ namespace commandsolver
 
         /**
          * @brief Execute the command
-         * 
+         *
          * @param ptr publisher smart pointer
          */
         virtual void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) = 0;
@@ -44,7 +43,7 @@ namespace commandsolver
 
     /**
      * @class CreateCommand
-     * 
+     *
      * @brief Create command class declaration
      */
     class CreateCommand : public ICommand
@@ -52,18 +51,17 @@ namespace commandsolver
         friend class ::CommandSolverTest;
 
     public:
-
         /**
          * @brief Construct a new CreateCommand object
-         * 
+         *
          * @param _id       file name
-         * @param _redius   file redius
+         * @param _radius   file radius
          * @param _height   file height
          */
-        CreateCommand(std::string _id, std::string _redius, std::string _height)
+        CreateCommand(std::string _id, std::string _radius, std::string _height)
         {
             data.id = _id;
-            data.redius = _redius;
+            data.radius = _radius;
             data.height = _height;
         };
 
@@ -73,16 +71,15 @@ namespace commandsolver
         void execute(std::shared_ptr<simplepubsub::IPublisher> ptr) override;
 
     private:
-
         /**
          * @struct createFileData
-         * 
+         *
          * @brief Create file data structure
          */
         struct createFileData
         {
             std::string id;
-            std::string redius;
+            std::string radius;
             std::string height;
         };
 
@@ -94,7 +91,7 @@ namespace commandsolver
 
     /**
      * @class ProbeCommand
-     * 
+     *
      * @brief Probe command class declaration
      */
     class ProbeCommand : public ICommand
@@ -102,10 +99,10 @@ namespace commandsolver
     public:
         /**
          * @brief Construct a new ProbeCommand object
-         * 
+         *
          * @param _sensor_data sensor data from probe
          */
-        ProbeCommand(std::string _sensor_data): sensor_data(_sensor_data){};
+        ProbeCommand(std::string _sensor_data) : sensor_data(_sensor_data){};
 
         /**
          * @brief Destroy the ProbeCommand object
@@ -121,18 +118,17 @@ namespace commandsolver
 
     /**
      * @class StopCommand
-     * 
+     *
      * @brief Stop command class declaration
      */
     class StopCommand : public ICommand
     {
     public:
-
         /**
          * @brief Construct a new StopCommand object
          */
         StopCommand(){};
-        
+
         /**
          * @brief Destroy the StopCommand object
          */
@@ -141,7 +137,7 @@ namespace commandsolver
 
     /**
      * @class GetInfoCommand
-     * 
+     *
      * @brief GetInfo command class declaration
      */
     class GetInfoCommand : public ICommand
@@ -160,11 +156,11 @@ namespace commandsolver
 
     /**
      * @class CommandFactory
-     * 
+     *
      * @brief Command factory class declaration
-     * 
+     *
      * @details This class is used to create the command
-     * 
+     *
      * @todo Add more command type: RESET, CHANGE
      */
     class CommandFactory
@@ -172,9 +168,11 @@ namespace commandsolver
     public:
         /**
          * @brief Create a Command object
-         * 
+         *
          * @param commandJson command json
-         * @return std::unique_ptr<ICommand> 
+         * @return std::unique_ptr<ICommand>
+         * 
+         * @todo Refactor decode method
          */
         static std::unique_ptr<ICommand> createCommand(const nlohmann::json &commandJson)
         {
@@ -184,7 +182,10 @@ namespace commandsolver
                 auto args = commandJson["Args"];
                 try
                 {
-                    return std::make_unique<CreateCommand>(args[0], args[1], args[2]);
+                    // TODO: Refactor this type decode
+                    return std::make_unique<CreateCommand>((args[0])["ID"].get<std::string>(),
+                                                           (args[1])["Radius"].get<std::string>(),
+                                                           (args[2])["Height"].get<std::string>());
                 }
                 catch (std::exception &e)
                 {
@@ -238,9 +239,9 @@ namespace commandsolver
 
     /**
      * @class CommandInvoker
-     * 
+     *
      * @brief Command invoker class declaration
-     * 
+     *
      * @details This class is used to execute the command
      */
     class CommandInvoker
@@ -248,14 +249,14 @@ namespace commandsolver
     public:
         /**
          * @brief Construct a new Command Invoker object
-         * 
+         *
          * @param ptr publisher smart pointer
          */
         CommandInvoker(std::shared_ptr<simplepubsub::IPublisher> ptr) : _publisher_ptr(ptr) {}
 
         /**
          * @brief Execute the command
-         * 
+         *
          * @param rawCommand raw command string
          */
         void executeCommand(const std::string &rawCommand)

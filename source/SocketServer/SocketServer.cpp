@@ -155,8 +155,8 @@ void SocketServer::createFile_callback(const std::string &topic, const std::stri
 void SocketServer::stop_callback(const std::string &topic, const std::string &data)
 {
     result_file.close();
-    zed_setZero();
     pt.reset();
+    zed_setZero();
 }
 
 /**

@@ -3,9 +3,18 @@
         {
             "Command": 0,
             "Args": [
-                "test",
-                "10",
-                "15"
+                {
+                    "ID": "test"
+                },
+                {
+                    "Radius": "10"
+                },
+                {
+                    "Height": "15"
+                },
+                {
+                    "Mode": "膜厚測量"
+                }
             ]
         },
         {
@@ -18,16 +27,25 @@
         {
             "Command": 0,
             "Args": [
-                "failed/test",
-                "10",
-                "15"
+                {
+                    "ID": "failed/test"
+                },
+                {
+                    "Radius": "10"
+                },
+                {
+                    "Height": "15"
+                },
+                {
+                    "Mode": "膜厚測量"
+                }
             ]
         }
     ],
     "PROBE": [
         {
             "Command": 1,
-            "Args":[
+            "Args": [
                 "123"
             ]
         }

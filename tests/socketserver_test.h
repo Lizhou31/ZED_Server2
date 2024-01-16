@@ -92,7 +92,8 @@ protected:
         ss = std::make_unique<mysocketserver::SocketServer>(std::move(std::make_unique<MockSocketFactory>()),
                                                             std::move(pub));
 
-        testFilePath = "./Data/" + (((testJson["CREATE"])[0])["Args"])[0].get<std::string>() + ".csv";
+        auto tempID = ((((testJson["CREATE"])[0])["Args"])[0])["ID"];
+        testFilePath = "./Data/" + tempID.get<std::string>() + ".csv";
     }
 
     void TearDown() override

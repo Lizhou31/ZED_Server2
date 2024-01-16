@@ -110,6 +110,7 @@ ZED_Server2/
     - [X] PositionTracker
     - [X] SimplePubSub
 - [ ] Improve the detailed comment.
+- [ ] Rearrange the CMake
 
 ## Code Coverage Report
 

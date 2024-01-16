@@ -22,7 +22,7 @@ TEST_F(CommandSolverTest, CreateCommandSuccessDecode)
     commandsolver::CreateCommand *ptr = dynamic_cast<commandsolver::CreateCommand *>(createcommand.get());
 
     EXPECT_EQ("test", getcreateFileDdata(ptr).id);
-    EXPECT_EQ("10", getcreateFileDdata(ptr).redius);
+    EXPECT_EQ("10", getcreateFileDdata(ptr).radius);
     EXPECT_EQ("15", getcreateFileDdata(ptr).height);
 }
 
@@ -57,9 +57,9 @@ TEST_F(CommandSolverTest, CreateCommandExecuteSuccess)
     ASSERT_EQ(0, successCommand["Command"]);
     auto args = successCommand["Args"];
 
-    std::string data = nlohmann::json{{"id", args[0]},
-                                      {"redius", args[1]},
-                                      {"height", args[2]}}
+    std::string data = nlohmann::json{{"id", (args[0])["ID"].get<std::string>()},
+                                      {"radius", (args[1])["Radius"].get<std::string>()},
+                                      {"height", (args[2])["Height"].get<std::string>()}}
                            .dump();
 
     EXPECT_CALL(*mock_publish, publish("CreateFile", data)).Times(1);

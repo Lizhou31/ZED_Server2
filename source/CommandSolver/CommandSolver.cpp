@@ -21,7 +21,7 @@ using namespace nlohmann;
 void CreateCommand::execute(std::shared_ptr<simplepubsub::IPublisher> ptr)
 {
     ptr->publish("CreateFile", json{{"id", data.id},
-                                    {"redius", data.redius},
+                                    {"radius", data.radius},
                                     {"height", data.height}}
                                    .dump());
 }
