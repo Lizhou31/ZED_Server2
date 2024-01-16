@@ -67,12 +67,25 @@ cmake -DCMAKE_BUILD_TYPE=Coverage -DUSE_DEPLOYMENT_ENV=OFF -DBUILD_TESTING=ON ..
 make -j4 && ctest
 make coverage
 ```
+The LCOV coverage report will be store in <code>build/coverage/</code>.
 
-### Build the doxygen
+### Build the Doxygen document
+
+You need install the [Doxygen](https://www.doxygen.nl/) to make the document.
 
 ```bash
 mkdir doxygen && doxygen zedserver2
 ```
+
+The Doxygen file will be stored in <code>doxygen/html/</code>
+
+### Important Tips
+
+* Output file
+
+   For the deployment environment, ensure that you add the <code>Data</code> directory in the same directory as the ZED_Server2 executable.
+
+   For the test environment, ensure that hou add the <code>Data</code> direcory in the <code>build/tests/</code>.
 
 ## File Tree
 
