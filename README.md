@@ -35,15 +35,16 @@ sudo make -j4 install
 
 ### Test Dependency
 * Install gmock:
-    ```bash
-    sudo apt install -y libgmock-dev
-    ```
+```bash
+sudo apt install -y libgmock-dev
+```
+
 ### For deploy environment build (Jetson Nano with ZED SDK)
 
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DEPLOYMENT_ENV=ON ..
+cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DEPLOYMENT_ENV=ON -DBUILD_TESTING=OFF ..
 make -j4
 ./ZED_Server2
 ```
@@ -53,7 +54,7 @@ make -j4
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DEPLOYMENT_ENV=OFF ..
+cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DEPLOYMENT_ENV=OFF -DBUILD_TESTING=ON ..
 make -j4 && ctest
 ```
 
@@ -62,7 +63,7 @@ make -j4 && ctest
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Coverage -DUSE_DEPLOYMENT_ENV=OFF ..
+cmake -DCMAKE_BUILD_TYPE=Coverage -DUSE_DEPLOYMENT_ENV=OFF -DBUILD_TESTING=ON ..
 make -j4 && ctest
 make coverage
 ```
